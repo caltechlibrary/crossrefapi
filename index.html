@@ -28,6 +28,8 @@ the an excellent CrossRefAPI Python package listed in the CrossRef API docs.
 This package is meant to follow the &ldquo;polite&rdquo; guidelines for interacting
 with the public API at api.crossref.org.</p>
 
+<h2>Go package example</h2>
+
 <pre><code class="language-go">    client, err := crossrefapi.NewCrossRefClient(&quot;jane.doe@library.example.edu&quot;)
     if err != nil {
         // handle error...
@@ -38,6 +40,11 @@ with the public API at api.crossref.org.</p>
         // handle error...
     }
     // continue processing your &quot;works&quot; result...
+</code></pre>
+
+<h2>Command line example</h2>
+
+<pre><code>    crossrefapi -mailto=&quot;jane.doe@library.example.edu&quot; works &quot;10.1037/0003-066x.59.1.29&quot;
 </code></pre>
 
 <h2>Reference</h2>
