@@ -7,7 +7,7 @@ This package is meant to follow the "polite" guidelines for interacting
 with the public API at api.crossref.org.
 
 ```go
-    client, err := crossrefapi.NewCrossRefClient("jane.doe@library.caltech.edu")
+    client, err := crossrefapi.NewCrossRefClient("jane.doe@library.example.edu")
     if err != nil {
         // handle error...
     }
