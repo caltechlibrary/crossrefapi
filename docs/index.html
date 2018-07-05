@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header>
+<a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="../">README</a></li>
+<li><a href="../license.html">LICENSE</a></li>
+<li><a href="../install.html">INSTALL</a></li>
+<li><a href="./">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/crossrefapi">Github</a></li>
+</ul>
+
+</nav>
+
+<section>
+<h1>USAGE</h1>
+
+<pre><code>crossrefapi [OPTIONS] types|works DOI
+</code></pre>
+
+<h2>SYNOPSIS</h2>
+
+<p>crossrefapi is a command line utility to retrieve &ldquo;types&rdquo; and &ldquo;works&rdquo; objects
+from the CrossRef API. It follows the etiquette suggested at</p>
+
+<pre><code>https://github.com/CrossRef/rest-api-doc#etiquette
+</code></pre>
+
+<p>EXAMPLES</p>
+
+<p>Return the types of objects in CrossRef (e.g. journal articles)</p>
+
+<pre><code>crossrefapi -mailto=&quot;jane.doe@example.edu&quot; types
+</code></pre>
+
+<p>Return the works for the doi &ldquo;10.1000/xyz123&rdquo;</p>
+
+<pre><code>crossrefapi -mailto=&quot;jane.doe@example.edu&quot; works &quot;10.1000/xyz123&quot;
+</code></pre>
+
+<h2>OPTIONS</h2>
+
+<pre><code>    -generate-markdown-docs   output documentation in Markdown
+    -h, -help                 display help
+    -l, -license              display license
+    -m, -mailto               set the mailto value for API access
+    -v, -version              display app version
+</code></pre>
+
+<p>crossrefapi v0.0.1</p>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2018 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+</body>
+</html>

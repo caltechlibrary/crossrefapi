@@ -51,7 +51,7 @@ func TestClient(t *testing.T) {
 		t.Errorf("expected not equal to 0001-01-01 00:00:00 +0000, got %s", api.LastRequest)
 	}
 
-        // test Types API end point
+	// test Types API end point
 	src, err = api.TypesJSON()
 	if err != nil {
 		t.Errorf("expected a JSON response, got %s", err)
@@ -88,7 +88,9 @@ func TestClient(t *testing.T) {
 	}
 
 	// Now test Works
-	src, err = api.WorksJSON("10.1039/C8TA03837F")
+	doi = "10.1000/xyz123"
+	doi_url = "https://dx.doi.org/10.1000/xyz123"
+	src, err = api.WorksJSON(doi)
 	if err != nil {
 		t.Errorf("expected a JSON response, got %s", err)
 		t.FailNow()
@@ -107,7 +109,7 @@ func TestClient(t *testing.T) {
 		t.Errorf("expected unmarshaled object, got nil")
 		t.FailNow()
 	}
-	obj2, err = api.Works("https://dx.doi.org/10.1039/C8TA03837F")
+	obj2, err = api.Works(doi_url)
 	if obj2 == nil {
 		t.Errorf("expected an non-nil Object from Types(), got nil but no error")
 		t.FailNow()
