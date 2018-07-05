@@ -37,7 +37,7 @@ website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
 	bash mk-website.bash
 
 test: clean bin/crossrefapi$(EXT)
-	go test
+	go test -mailto="jane.doe@example.edu"
 
 format:
 	gofmt -w crossrefapi.go

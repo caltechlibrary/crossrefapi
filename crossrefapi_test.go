@@ -88,8 +88,9 @@ func TestClient(t *testing.T) {
 	}
 
 	// Now test Works
-	doi = "10.1000/xyz123"
-	doi_url = "https://dx.doi.org/10.1000/xyz123"
+	doi := "10.1037/0003-066x.59.1.29"                        //"10.1000/xyz123"
+	doi_url := "https://dx.doi.org/10.1037/0003-066x.59.1.29" // "https://dx.doi.org/10.1000/xyz123"
+
 	src, err = api.WorksJSON(doi)
 	if err != nil {
 		t.Errorf("expected a JSON response, got %s", err)
