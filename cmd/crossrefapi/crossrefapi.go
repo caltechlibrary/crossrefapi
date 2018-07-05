@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	// Caltech Library packages
 	"github.com/caltechlibrary/cli"
@@ -33,14 +34,33 @@ var (
 	mailto string
 )
 
+func pop(args []string) (string, []string) {
+	var (
+		arg string
+		l   int
+	)
+	l = len(args)
+	switch {
+	case l > 1:
+		arg = args[0]
+		args = args[1:]
+	case l == 1:
+		arg = args[0]
+		args = []string{}
+	default:
+		return "", []string{}
+	}
+	return arg, args
+}
+
 func main() {
 	appName := path.Base(os.Args[0])
 	app := cli.NewCli(crossrefapi.Version)
-	app.AddParams("DOI") //, "[DOI, DOI...]")
-	//add.AddHelp("description", []byte(fmt.Sprintf(description, appName)))
-	//add.AddHelp("license", []byte(license))
+	app.AddParams("works|types", "DOI") //, "[DOI, DOI...]")
+	//app.AddHelp("description", []byte(fmt.Sprintf(description, appName)))
+	//app.AddHelp("license", []byte(license))
 
-	add.StringVar(&mailto, "m,mailto", "", "set the mailto value for API access")
+	app.StringVar(&mailto, "m,mailto", "", "set the mailto value for API access")
 
 	app.Parse()
 
@@ -49,14 +69,36 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
+
+	var (
+		src     []byte
+		apiPath string
+		doi     string
+	)
 	args := app.Args()
-	if len(args) == 1 {
-		src, err := api.WorksJSON(args[0])
+	apiPath, args = pop(args)
+	doi, args = pop(args)
+	if apiPath == "" {
+		fmt.Fprintf(os.Stderr, "USAGE: %s works DOI | %s types\n", appName, appName)
+		os.Exit(1)
+	}
+	switch strings.ToLower(apiPath) {
+	case "types":
+		src, err = api.TypesJSON()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s\n", err)
 			os.Exit(1)
 		}
-		fmt.Fprintf(os.Stdout, "%s\n", src)
-		os.Exit(0)
+	case "works":
+		src, err = api.WorksJSON(doi)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
+	default:
+		fmt.Fprintf(os.Stderr, "USAGE: %s works DOI | %s types\n", appName, appName)
+		os.Exit(1)
 	}
+	fmt.Fprintf(os.Stdout, "%s\n", src)
+	os.Exit(0)
 }
