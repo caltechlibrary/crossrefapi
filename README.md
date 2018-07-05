@@ -11,7 +11,8 @@ with the public API at api.crossref.org.
     if err != nil {
         // handle error...
     }
-    works, err := client.Works("10.1590/0102-311x00133115")
+    works, err := client.Works("10.1037/0003-066x.59.1.29")
+   
     if err != nil {
         // handle error...
     }
