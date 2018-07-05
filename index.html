@@ -29,8 +29,13 @@ This package is meant to follow the &ldquo;polite&rdquo; guidelines for interact
 with the public API at api.crossref.org.</p>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <pre><code class="language-go">    client, err := crossrefapi.NewCrossRefClient(&quot;jane.doe@library.caltech.edu&quot;)
 =======
+=======
+<h2>Go package example</h2>
+
+>>>>>>> e8f4d8a5f3907e8d6e809c2dba06629d8598d84f
 <pre><code class="language-go">    client, err := crossrefapi.NewCrossRefClient(&quot;jane.doe@library.example.edu&quot;)
 >>>>>>> e7f99b943f94004a55e89124cb926360532e3313
     if err != nil {
@@ -42,6 +47,11 @@ with the public API at api.crossref.org.</p>
         // handle error...
     }
     // continue processing your &quot;works&quot; result...
+</code></pre>
+
+<h2>Command line example</h2>
+
+<pre><code>    crossrefapi -mailto=&quot;jane.doe@library.example.edu&quot; works &quot;10.1037/0003-066x.59.1.29&quot;
 </code></pre>
 
 <h2>Reference</h2>
