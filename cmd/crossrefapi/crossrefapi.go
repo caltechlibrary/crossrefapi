@@ -35,17 +35,17 @@ var (
 %s is a command line utility to retrieve "types" and "works" objects
 from the CrossRef API. It follows the etiquette suggested at
 	
-	https://github.com/CrossRef/rest-api-doc#etiquette
+  https://github.com/CrossRef/rest-api-doc#etiquette
 
 EXAMPLES
 
 Return the types of objects in CrossRef (e.g. journal articles)
 
-	%s -mailto="jane.doe@example.edu" types
+  %s -mailto="jdoe@example.edu" types
 
-Return the works for the doi "10.1000/xyz123"
+Return the works for the doi "10.1037/0003-066x.59.1.29"
 
-	%s -mailto="jane.doe@example.edu" works "10.1000/xyz123"
+  %s -mailto="jdoe@example.edu" works "10.1037/0003-066x.59.1.29"
 
 `
 
