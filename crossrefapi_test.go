@@ -14,7 +14,7 @@ var (
 )
 
 func TestClient(t *testing.T) {
-	api, err := NewCrossRefClient(MailTo)
+	api, err := NewCrossRefClient("crossrefapi_test.go", MailTo)
 	if err != nil {
 		t.Error(err)
 		t.FailNow()

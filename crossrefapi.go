@@ -21,6 +21,7 @@ const (
 )
 
 type CrossRefClient struct {
+	AppName           string
 	MailTo            string `json:"mailto"`
 	API               string `json:"api"`
 	RateLimitLimit    int    `json:"limit"`
@@ -37,11 +38,12 @@ type Object = map[string]interface{}
 // NewCrossRefClient creates a client and makes a request
 // and returns the JSON source as a []byte or error if their is
 // a problem.
-func NewCrossRefClient(mailTo string) (*CrossRefClient, error) {
+func NewCrossRefClient(appName string, mailTo string) (*CrossRefClient, error) {
 	if strings.TrimSpace(mailTo) == "" {
 		return nil, fmt.Errorf("An mailto value is required for politeness")
 	}
 	client := new(CrossRefClient)
+	client.AppName = appName
 	client.API = `https://api.crossref.org`
 	client.MailTo = mailTo
 	return client, nil
@@ -71,7 +73,7 @@ func (c *CrossRefClient) getJSON(p string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("User-Agent", fmt.Sprintf("crossrefapi/%s (github.com/caltechlibrary/crossrefapi/; mailto: %s), A golang cli based on https://github.com/CrossRef/rest-api-doc", Version, c.MailTo))
+	req.Header.Add("User-Agent", fmt.Sprintf("%s, based on crossrefapi/%s (github.com/caltechlibrary/crossrefapi/; mailto: %s), A golang cli based on https://github.com/CrossRef/rest-api-doc", c.AppName, Version, c.MailTo))
 
 	// NOTE: Next request can be made based on last request time plus
 	// the duration suggested by X-Rate-Limit-Interval / X-Rate-Limit-Limit

@@ -148,7 +148,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	api, err := crossrefapi.NewCrossRefClient(mailto)
+	api, err := crossrefapi.NewCrossRefClient(appName, mailto)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
