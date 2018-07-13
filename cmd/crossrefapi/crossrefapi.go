@@ -20,6 +20,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path"
@@ -167,13 +168,23 @@ func main() {
 	}
 	switch strings.ToLower(apiPath) {
 	case "types":
-		src, err = api.TypesJSON()
+		obj, err := api.Types()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
+		src, err = json.MarshalIndent(obj, "", "   ")
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s\n", err)
 			os.Exit(1)
 		}
 	case "works":
-		src, err = api.WorksJSON(doi)
+		obj, err := api.Works(doi)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
+		src, err = json.MarshalIndent(obj, "", "    ")
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s\n", err)
 			os.Exit(1)
