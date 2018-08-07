@@ -38,21 +38,23 @@ _%s_ can retrieve "types" and "works" from the CrossRef API
 	description = `
 _%s_ is a command line utility to retrieve "types" and "works" objects
 from the CrossRef API. It follows the etiquette suggested at
+
 ` + "```" + `
-  https://github.com/CrossRef/rest-api-doc#etiquette
+    https://github.com/CrossRef/rest-api-doc#etiquette
 ` + "```" + `
 `
 	examples = `
 Return the types of objects in CrossRef (e.g. journal articles)
 
 ` + "```" + `
-  %s -mailto="jdoe@example.edu" types
+    %s -mailto="jdoe@example.edu" types
 ` + "```" + `
 
 Return the works for the doi "10.1037/0003-066x.59.1.29"
 
 ` + "```" + `
-  %s -mailto="jdoe@example.edu" works "10.1037/0003-066x.59.1.29"
+    %s -mailto="jdoe@example.edu" \
+        works "10.1037/0003-066x.59.1.29"
 ` + "```" + `
 `
 
@@ -73,11 +75,11 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 `
 	// Standard Options
-	generateMarkdownDocs bool
-	generateManPage      bool
-	showHelp             bool
-	showLicense          bool
-	showVersion          bool
+	generateMarkdown bool
+	generateManPage  bool
+	showHelp         bool
+	showLicense      bool
+	showVersion      bool
 
 	// App Specific Options
 	mailto string
@@ -119,7 +121,7 @@ func main() {
 	app.BoolVar(&showHelp, "h,help", false, "display help")
 	app.BoolVar(&showLicense, "l,license", false, "display license")
 	app.BoolVar(&showVersion, "v,version", false, "display app version")
-	app.BoolVar(&generateMarkdownDocs, "generate-markdown-docs", false, "output documentation in Markdown")
+	app.BoolVar(&generateMarkdown, "generate-markdown", false, "output documentation in Markdown")
 	app.BoolVar(&generateManPage, "generate-manpage", false, "generate man page")
 
 	// Application Options
@@ -128,8 +130,8 @@ func main() {
 	app.Parse()
 	args := app.Args()
 
-	if generateMarkdownDocs {
-		app.GenerateMarkdownDocs(os.Stdout)
+	if generateMarkdown {
+		app.GenerateMarkdown(os.Stdout)
 		os.Exit(0)
 	}
 	if generateManPage {
