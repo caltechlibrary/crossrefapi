@@ -32,22 +32,28 @@ import (
 )
 
 var (
+	synopsis = `
+_%s_ can retrieve "types" and "works" from the CrossRef API
+`
 	description = `
-%s is a command line utility to retrieve "types" and "works" objects
+_%s_ is a command line utility to retrieve "types" and "works" objects
 from the CrossRef API. It follows the etiquette suggested at
-	
+` + "```" + `
   https://github.com/CrossRef/rest-api-doc#etiquette
-
-EXAMPLES
-
+` + "```" + `
+`
+	examples = `
 Return the types of objects in CrossRef (e.g. journal articles)
 
+` + "```" + `
   %s -mailto="jdoe@example.edu" types
+` + "```" + `
 
 Return the works for the doi "10.1037/0003-066x.59.1.29"
 
+` + "```" + `
   %s -mailto="jdoe@example.edu" works "10.1037/0003-066x.59.1.29"
-
+` + "```" + `
 `
 
 	license = `
@@ -68,6 +74,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `
 	// Standard Options
 	generateMarkdownDocs bool
+	generateManPage      bool
 	showHelp             bool
 	showLicense          bool
 	showVersion          bool
@@ -100,7 +107,9 @@ func main() {
 	app := cli.NewCli(crossrefapi.Version)
 	app.AddParams("types|works DOI")
 
-	app.AddHelp("description", []byte(fmt.Sprintf(description, appName, appName, appName)))
+	app.AddHelp("synopsis", []byte(fmt.Sprintf(synopsis, appName)))
+	app.AddHelp("description", []byte(fmt.Sprintf(description, appName)))
+	app.AddHelp("examples", []byte(fmt.Sprintf(examples, appName, appName)))
 	app.AddHelp("license", []byte(fmt.Sprintf(license, appName, crossrefapi.Version)))
 	for k, v := range Help {
 		app.AddHelp(k, v)
@@ -111,6 +120,7 @@ func main() {
 	app.BoolVar(&showLicense, "l,license", false, "display license")
 	app.BoolVar(&showVersion, "v,version", false, "display app version")
 	app.BoolVar(&generateMarkdownDocs, "generate-markdown-docs", false, "output documentation in Markdown")
+	app.BoolVar(&generateManPage, "generate-manpage", false, "generate man page")
 
 	// Application Options
 	app.StringVar(&mailto, "m,mailto", "", "set the mailto value for API access")
@@ -120,6 +130,10 @@ func main() {
 
 	if generateMarkdownDocs {
 		app.GenerateMarkdownDocs(os.Stdout)
+		os.Exit(0)
+	}
+	if generateManPage {
+		app.GenerateManPage(os.Stdout)
 		os.Exit(0)
 	}
 
