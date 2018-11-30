@@ -107,7 +107,7 @@ func pop(args []string) (string, []string) {
 func main() {
 	appName := path.Base(os.Args[0])
 	app := cli.NewCli(crossrefapi.Version)
-	app.AddParams("types|works DOI")
+	app.SetParams("types|works DOI")
 
 	app.AddHelp("synopsis", []byte(fmt.Sprintf(synopsis, appName)))
 	app.AddHelp("description", []byte(fmt.Sprintf(description, appName)))

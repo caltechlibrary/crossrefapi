@@ -1,8 +1,10 @@
 package crossrefapi
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"math"
 	"net/http"
@@ -34,6 +36,17 @@ type CrossRefClient struct {
 
 // Object is the general holder of what get back after unmarshaling json
 type Object = map[string]interface{}
+
+// Custom JSON decoder so we can treat numbers easier
+func jsonDecode(src []byte, obj interface{}) error {
+	dec := json.NewDecoder(bytes.NewReader(src))
+	dec.UseNumber()
+	err := dec.Decode(&obj)
+	if err != nil && err != io.EOF {
+		return err
+	}
+	return nil
+}
 
 // NewCrossRefClient creates a client and makes a request
 // and returns the JSON source as a []byte or error if their is
@@ -155,7 +168,8 @@ func (c *CrossRefClient) Works(doi string) (Object, error) {
 	}
 	if len(src) > 0 {
 		object := make(Object)
-		err = json.Unmarshal(src, &object)
+		//FIXME: need to decode so I get a nice json.Number object
+		err = jsonDecode(src, &object)
 		if err != nil {
 			return nil, err
 		}
