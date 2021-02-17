@@ -1,0 +1,4 @@
+github.com/caltechlibrary/cli v0.0.16 h1:jgw6dZb3VDy9L5LrWWm1ieqHYAMKgcv+NF6osSj3YRM=
+github.com/caltechlibrary/cli v0.0.16/go.mod h1:BVT+6d/QqcN4UApWR3ufjkkKj2O6+48B4G6iUpP8m38=
+github.com/caltechlibrary/doitools v0.0.0-20190910184449-c524f84bb2b3 h1:CPVAtgb3KfFDvN/LA6lk3JGT76tVC+PohQWynTkS52s=
+github.com/caltechlibrary/doitools v0.0.0-20190910184449-c524f84bb2b3/go.mod h1:dBtDM+sEd5W27XSuPTcYGUNmkO9PWJ4JMh5bW1EO8L0=
