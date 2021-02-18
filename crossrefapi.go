@@ -1,8 +1,10 @@
 package crossrefapi
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"math"
 	"net/http"
@@ -17,10 +19,11 @@ import (
 )
 
 const (
-	Version = `v0.0.1`
+	Version = `v0.0.5`
 )
 
 type CrossRefClient struct {
+	AppName           string
 	MailTo            string `json:"mailto"`
 	API               string `json:"api"`
 	RateLimitLimit    int    `json:"limit"`
@@ -34,14 +37,26 @@ type CrossRefClient struct {
 // Object is the general holder of what get back after unmarshaling json
 type Object = map[string]interface{}
 
+// Custom JSON decoder so we can treat numbers easier
+func jsonDecode(src []byte, obj interface{}) error {
+	dec := json.NewDecoder(bytes.NewReader(src))
+	dec.UseNumber()
+	err := dec.Decode(&obj)
+	if err != nil && err != io.EOF {
+		return err
+	}
+	return nil
+}
+
 // NewCrossRefClient creates a client and makes a request
 // and returns the JSON source as a []byte or error if their is
 // a problem.
-func NewCrossRefClient(mailTo string) (*CrossRefClient, error) {
+func NewCrossRefClient(appName string, mailTo string) (*CrossRefClient, error) {
 	if strings.TrimSpace(mailTo) == "" {
 		return nil, fmt.Errorf("An mailto value is required for politeness")
 	}
 	client := new(CrossRefClient)
+	client.AppName = appName
 	client.API = `https://api.crossref.org`
 	client.MailTo = mailTo
 	return client, nil
@@ -57,6 +72,8 @@ func (c *CrossRefClient) calcDelay() time.Duration {
 // getJSON retrieves the path from the CrossRef API maintaining politeness.
 // It returns a []byte of JSON source or an error
 func (c *CrossRefClient) getJSON(p string) ([]byte, error) {
+	var src []byte
+
 	u, err := url.Parse(c.API)
 	if err != nil {
 		return nil, err
@@ -71,7 +88,7 @@ func (c *CrossRefClient) getJSON(p string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("User-Agent", fmt.Sprintf("crossrefapi/%s (github.com/caltechlibrary/crossrefapi/; mailto: %s), A golang cli based on https://github.com/CrossRef/rest-api-doc", Version, c.MailTo))
+	req.Header.Add("User-Agent", fmt.Sprintf("%s, based on crossrefapi/%s (github.com/caltechlibrary/crossrefapi/; mailto: %s), A golang cli based on https://github.com/CrossRef/rest-api-doc", c.AppName, Version, c.MailTo))
 
 	// NOTE: Next request can be made based on last request time plus
 	// the duration suggested by X-Rate-Limit-Interval / X-Rate-Limit-Limit
@@ -87,9 +104,11 @@ func (c *CrossRefClient) getJSON(p string) ([]byte, error) {
 	c.Status = res.Status
 	c.StatusCode = res.StatusCode
 	// Process the body buffer
-	src, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
+	if c.StatusCode == 200 {
+		src, err = ioutil.ReadAll(res.Body)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// NOTE: we want to track the current values for any limits
@@ -110,7 +129,6 @@ func (c *CrossRefClient) getJSON(p string) ([]byte, error) {
 		c.RateLimitInterval = 1
 	}
 	c.LastRequest = time.Now()
-
 	return src, nil
 }
 
@@ -148,10 +166,14 @@ func (c *CrossRefClient) Works(doi string) (Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	object := make(Object)
-	err = json.Unmarshal(src, &object)
-	if err != nil {
-		return nil, err
+	if len(src) > 0 {
+		object := make(Object)
+		//FIXME: need to decode so I get a nice json.Number object
+		err = jsonDecode(src, &object)
+		if err != nil {
+			return nil, err
+		}
+		return object, nil
 	}
-	return object, nil
+	return nil, nil
 }

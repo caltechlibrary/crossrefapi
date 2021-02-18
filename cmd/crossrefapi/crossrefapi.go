@@ -4,7 +4,7 @@
 //
 // Author R. S. Doiel, <rsdoiel@library.caltech.edu>
 //
-// Copyright (c) 2018, Caltech
+// Copyright (c) 2021, Caltech
 // All rights not granted herein are expressly reserved by Caltech.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -20,6 +20,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path"
@@ -31,28 +32,36 @@ import (
 )
 
 var (
+	synopsis = `
+_%s_ can retrieve "types" and "works" from the CrossRef API
+`
 	description = `
-%s is a command line utility to retrieve "types" and "works" objects
+_%s_ is a command line utility to retrieve "types" and "works" objects
 from the CrossRef API. It follows the etiquette suggested at
-	
-  https://github.com/CrossRef/rest-api-doc#etiquette
 
-EXAMPLES
-
+` + "```" + `
+    https://github.com/CrossRef/rest-api-doc#etiquette
+` + "```" + `
+`
+	examples = `
 Return the types of objects in CrossRef (e.g. journal articles)
 
-  %s -mailto="jdoe@example.edu" types
+` + "```" + `
+    %s -mailto="jdoe@example.edu" types
+` + "```" + `
 
 Return the works for the doi "10.1037/0003-066x.59.1.29"
 
-  %s -mailto="jdoe@example.edu" works "10.1037/0003-066x.59.1.29"
-
+` + "```" + `
+    %s -mailto="jdoe@example.edu" \
+        works "10.1037/0003-066x.59.1.29"
+` + "```" + `
 `
 
 	license = `
 %s %s
 
-Copyright (c) 2018, Caltech
+Copyright (c) 2021, Caltech
 All rights not granted herein are expressly reserved by Caltech.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -66,10 +75,11 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 `
 	// Standard Options
-	generateMarkdownDocs bool
-	showHelp             bool
-	showLicense          bool
-	showVersion          bool
+	generateMarkdown bool
+	generateManPage  bool
+	showHelp         bool
+	showLicense      bool
+	showVersion      bool
 
 	// App Specific Options
 	mailto string
@@ -97,9 +107,11 @@ func pop(args []string) (string, []string) {
 func main() {
 	appName := path.Base(os.Args[0])
 	app := cli.NewCli(crossrefapi.Version)
-	app.AddParams("types|works DOI")
+	app.SetParams("types|works DOI")
 
-	app.AddHelp("description", []byte(fmt.Sprintf(description, appName, appName, appName)))
+	app.AddHelp("synopsis", []byte(fmt.Sprintf(synopsis, appName)))
+	app.AddHelp("description", []byte(fmt.Sprintf(description, appName)))
+	app.AddHelp("examples", []byte(fmt.Sprintf(examples, appName, appName)))
 	app.AddHelp("license", []byte(fmt.Sprintf(license, appName, crossrefapi.Version)))
 	for k, v := range Help {
 		app.AddHelp(k, v)
@@ -109,7 +121,8 @@ func main() {
 	app.BoolVar(&showHelp, "h,help", false, "display help")
 	app.BoolVar(&showLicense, "l,license", false, "display license")
 	app.BoolVar(&showVersion, "v,version", false, "display app version")
-	app.BoolVar(&generateMarkdownDocs, "generate-markdown-docs", false, "output documentation in Markdown")
+	app.BoolVar(&generateMarkdown, "generate-markdown", false, "output documentation in Markdown")
+	app.BoolVar(&generateManPage, "generate-manpage", false, "generate man page")
 
 	// Application Options
 	app.StringVar(&mailto, "m,mailto", "", "set the mailto value for API access")
@@ -117,8 +130,12 @@ func main() {
 	app.Parse()
 	args := app.Args()
 
-	if generateMarkdownDocs {
-		app.GenerateMarkdownDocs(os.Stdout)
+	if generateMarkdown {
+		app.GenerateMarkdown(os.Stdout)
+		os.Exit(0)
+	}
+	if generateManPage {
+		app.GenerateManPage(os.Stdout)
 		os.Exit(0)
 	}
 
@@ -148,7 +165,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	api, err := crossrefapi.NewCrossRefClient(mailto)
+	api, err := crossrefapi.NewCrossRefClient(appName, mailto)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
@@ -167,13 +184,23 @@ func main() {
 	}
 	switch strings.ToLower(apiPath) {
 	case "types":
-		src, err = api.TypesJSON()
+		obj, err := api.Types()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
+		src, err = json.MarshalIndent(obj, "", "   ")
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s\n", err)
 			os.Exit(1)
 		}
 	case "works":
-		src, err = api.WorksJSON(doi)
+		obj, err := api.Works(doi)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
+		src, err = json.MarshalIndent(obj, "", "    ")
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s\n", err)
 			os.Exit(1)

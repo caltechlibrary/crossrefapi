@@ -10,56 +10,72 @@
 </header>
 <nav>
 <ul>
-<li><a href="/">Home</a></li>
-<li><a href="../">README</a></li>
-<li><a href="license.html">LICENSE</a></li>
-<li><a href="install.html">INSTALL</a></li>
-<li><a href="docs/">Documentation</a></li>
-<li><a href="https://github.com/caltechlibrary/crossrefapi">Github</a></li>
+<li>
+<a href="/">Home</a>
+</li>
+<li>
+<a href="../">README</a>
+</li>
+<li>
+<a href="license.html">LICENSE</a>
+</li>
+<li>
+<a href="install.html">INSTALL</a>
+</li>
+<li>
+<a href="docs/">Documentation</a>
+</li>
+<li>
+<a href="https://github.com/caltechlibrary/crossrefapi">Github</a>
+</li>
 </ul>
-
 </nav>
 
 <section>
-<h1>crossrefapi</h1>
-
-<p>This is a go package for working with the CrossRef API. It is inspired by
-the an excellent CrossRefAPI Python package listed in the CrossRef API docs.
-This package is meant to follow the &ldquo;polite&rdquo; guidelines for interacting
-with the public API at api.crossref.org.</p>
-
-<h2>Go package example</h2>
-
-<pre><code class="language-go">    client, err := crossrefapi.NewCrossRefClient(&quot;jane.doe@library.example.edu&quot;)
-    if err != nil {
-        // handle error...
-    }
-    works, err := client.Works(&quot;10.1037/0003-066x.59.1.29&quot;)
-   
-    if err != nil {
-        // handle error...
-    }
-    // continue processing your &quot;works&quot; result...
-</code></pre>
-
-<h2>Command line example</h2>
-
-<pre><code>    crossrefapi -mailto=&quot;jane.doe@library.example.edu&quot; works &quot;10.1037/0003-066x.59.1.29&quot;
-</code></pre>
-
-<h2>Reference</h2>
-
+<h1 id="crossrefapi">
+crossrefapi
+</h1>
+<p>
+This is a go package for working with the CrossRef API. It is inspired by the an excellent CrossRefAPI Python package listed in the CrossRef API docs. This package is meant to follow the “polite” guidelines for interacting with the public API at api.crossref.org.
+</p>
+<h2 id="go-package-example">
+Go package example
+</h2>
+<div id="cb1" class="sourceCode">
+<pre class="sourceCode go"><code class="sourceCode go"><span id="cb1-1"><a href="#cb1-1"></a>    client, err := crossrefapi.NewCrossRefClient(<span class="st">&quot;jane.doe@library.example.edu&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb1-3"><a href="#cb1-3"></a>        <span class="co">// handle error...</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>    }</span>
+<span id="cb1-5"><a href="#cb1-5"></a>    works, err := client.Works(<span class="st">&quot;10.1037/0003-066x.59.1.29&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6"></a>   </span>
+<span id="cb1-7"><a href="#cb1-7"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb1-8"><a href="#cb1-8"></a>        <span class="co">// handle error...</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>    }</span>
+<span id="cb1-10"><a href="#cb1-10"></a>    <span class="co">// continue processing your &quot;works&quot; result...</span></span></code></pre>
+</div>
+<h2 id="command-line-example">
+Command line example
+</h2>
+<pre><code>    crossrefapi -mailto=&quot;jane.doe@library.example.edu&quot; works &quot;10.1037/0003-066x.59.1.29&quot;</code></pre>
+<h2 id="reference">
+Reference
+</h2>
 <ul>
-<li><a href="https://github.com/CrossRef/rest-api-doc">CrossRef API Docs</a></li>
-<li><a href="https://www.crossref.org/schema/">CrossRef Schemas</a></li>
-<li><a href="https://github.com/fabiobatalha/crossrefapi">CrossRefAPI</a> - Python implementation</li>
+<li>
+<a href="https://github.com/CrossRef/rest-api-doc">CrossRef API Docs</a>
+</li>
+<li>
+<a href="https://www.crossref.org/schema/">CrossRef Schemas</a>
+</li>
+<li>
+<a href="https://github.com/fabiobatalha/crossrefapi">CrossRefAPI</a> - Python implementation
+</li>
 </ul>
-
 </section>
 
 <footer>
 <span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
-<span>&copy; 2018 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<span>&copy; 2021 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
 <address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
 <span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
 <span><a href="mailto:library@caltech.edu">Email Us</a></span>
