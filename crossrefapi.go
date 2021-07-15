@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	Version = `v0.0.4`
+	Version = `v1.0.0`
 )
 
 type CrossRefClient struct {
