@@ -6,7 +6,7 @@
     "codeRepository": "https://github.com/caltechlibrary/crossrefapi",
     "issueTracker": "https://github.com/caltechlibrary/crossrefapi/issues",
     "license": "https://caltechlibrary/crossrefapi/LICENSE",
-    "version": "0.0.5",
+    "version": "1.0.0",
     "author": [
         {
             "@type": "Person",
