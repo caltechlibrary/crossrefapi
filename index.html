@@ -42,16 +42,16 @@ This is a go package for working with the CrossRef API. It is inspired by the an
 Go package example
 </h2>
 <div id="cb1" class="sourceCode">
-<pre class="sourceCode go"><code class="sourceCode go"><span id="cb1-1"><a href="#cb1-1"></a>    client, err := crossrefapi.NewCrossRefClient(<span class="st">&quot;jane.doe@library.example.edu&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
-<span id="cb1-3"><a href="#cb1-3"></a>        <span class="co">// handle error...</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a>    }</span>
-<span id="cb1-5"><a href="#cb1-5"></a>    works, err := client.Works(<span class="st">&quot;10.1037/0003-066x.59.1.29&quot;</span>)</span>
-<span id="cb1-6"><a href="#cb1-6"></a>   </span>
-<span id="cb1-7"><a href="#cb1-7"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
-<span id="cb1-8"><a href="#cb1-8"></a>        <span class="co">// handle error...</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a>    }</span>
-<span id="cb1-10"><a href="#cb1-10"></a>    <span class="co">// continue processing your &quot;works&quot; result...</span></span></code></pre>
+<pre class="sourceCode go"><code class="sourceCode go"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>    client, err := crossrefapi.NewCrossRefClient(<span class="st">&quot;jane.doe@library.example.edu&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>        <span class="co">// handle error...</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>    }</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>    works, err := client.Works(<span class="st">&quot;10.1037/0003-066x.59.1.29&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>   </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>        <span class="co">// handle error...</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>    }</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>    <span class="co">// continue processing your &quot;works&quot; result...</span></span></code></pre>
 </div>
 <h2 id="command-line-example">
 Command line example
