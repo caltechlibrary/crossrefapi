@@ -18,9 +18,6 @@ import (
 	"github.com/caltechlibrary/doitools"
 )
 
-const (
-	Version = `v1.0.0`
-)
 
 type CrossRefClient struct {
 	AppName           string

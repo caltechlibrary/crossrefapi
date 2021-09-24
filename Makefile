@@ -3,11 +3,13 @@
 #
 PROJECT = crossrefapi
 
-VERSION = $(shell grep -m 1 'Version =' $(PROJECT).go | cut -d\`  -f 2)
+VERSION = $(shell grep '"version":' codemeta.json | cut -d \" -f 4)
 
 BRANCH = $(shell git branch | grep '* ' | cut -d\  -f 2)
 
 PKGASSETS = $(shell which pkgassets)
+
+CODEMETA2CFF = $(shell which codemeta2cff)
 
 PROJECT_LIST = crossrefapi
 
@@ -18,7 +20,16 @@ ifeq ($(OS), Windows)
 	EXT = .exe
 endif
 
+build: version.go $(PROJECT_LIST)
 
+version.go: .FORCE
+	@echo "package $(PROJECT)" >version.go
+	@echo '' >>version.go
+	@echo 'const Version = "v$(VERSION)"' >>version.go
+	@echo '' >>version.go
+	@git add version.go
+	$(CODEMETA2CFF)
+	
 crossrefapi$(EXT): bin/crossrefapi$(EXT)
 
 cmd/crossrefapi/assets.go:
@@ -28,7 +39,6 @@ cmd/crossrefapi/assets.go:
 bin/crossrefapi$(EXT): crossrefapi.go cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
 	go build -o bin/crossrefapi$(EXT) cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
 
-build: $(PROJECT_LIST)
 
 install: 
 	env GOBIN=$(GOPATH)/bin go install cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
@@ -115,3 +125,5 @@ publish:
 	bash mk-website.bash
 	bash publish.bash
 
+
+.FORCE:
