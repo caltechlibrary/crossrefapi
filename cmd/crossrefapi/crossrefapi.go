@@ -35,7 +35,7 @@ var (
 	description = `
 USAGE
 
-    {appName}  [OPTIONS] DOI
+    {appName}  [OPTIONS] types|works DOI
 
 SYNOPSIS
 
@@ -108,7 +108,6 @@ func main() {
 	appName := path.Base(os.Args[0])
 	flagSet := flag.NewFlagSet(appName, flag.ContinueOnError)
 
-
 	// Standard Options
 	flagSet.BoolVar(&showHelp, "h", false, "display help")
 	flagSet.BoolVar(&showHelp, "h,help", false, "display help")
@@ -117,9 +116,9 @@ func main() {
 
 	// Application Options
 	flagSet.StringVar(&mailto, "m", "", "set the mailto value for API access")
-	flagSet.StringVar(&mailto, "m,mailto", "", "set the mailto value for API access")
+	flagSet.StringVar(&mailto, "mailto", "", "set the mailto value for API access")
 
-	flagSet.Parse(os.Args)
+	flagSet.Parse(os.Args[1:])
 	args := flagSet.Args()
 
 
