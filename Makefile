@@ -7,7 +7,6 @@ VERSION = $(shell grep '"version":' codemeta.json | cut -d \" -f 4)
 
 BRANCH = $(shell git branch | grep '* ' | cut -d\  -f 2)
 
-PKGASSETS = $(shell which pkgassets)
 
 CODEMETA2CFF = $(shell which codemeta2cff)
 
@@ -32,16 +31,12 @@ version.go: .FORCE
 	
 crossrefapi$(EXT): bin/crossrefapi$(EXT)
 
-cmd/crossrefapi/assets.go:
-	pkgassets -o cmd/crossrefapi/assets.go -p main -ext=".md" -strip-prefix="/" -strip-suffix=".md" Examples how-to Help docs/crossrefapi
-	git add cmd/crossrefapi/assets.go
-
-bin/crossrefapi$(EXT): crossrefapi.go cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
-	go build -o bin/crossrefapi$(EXT) cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
+bin/crossrefapi$(EXT): crossrefapi.go cmd/crossrefapi/crossrefapi.go
+	go build -o bin/crossrefapi$(EXT) cmd/crossrefapi/crossrefapi.go
 
 
 install: 
-	env GOBIN=$(GOPATH)/bin go install cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
+	env GOBIN=$(GOPATH)/bin go install cmd/crossrefapi/crossrefapi.go
 
 website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
 	bash mk-website.bash
@@ -60,7 +55,6 @@ lint:
 	golint cmd/crossrefapi/crossrefapi.go
 
 clean: 
-	if [ "$(PKGASSETS)" != "" ]; then bash rebuild-assets.bash; fi
 	if [ -f index.html ]; then rm *.html; fi
 	if [ -d bin ]; then rm -fR bin; fi
 	if [ -d dist ]; then rm -fR dist; fi
@@ -73,31 +67,31 @@ man: build
 
 dist/linux-amd64:
 	mkdir -p dist/bin
-	env  GOOS=linux GOARCH=amd64 go build -o dist/bin/crossrefapi cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
+	env  GOOS=linux GOARCH=amd64 go build -o dist/bin/crossrefapi cmd/crossrefapi/crossrefapi.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-linux-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/windows-amd64:
 	mkdir -p dist/bin
-	env  GOOS=windows GOARCH=amd64 go build -o dist/bin/crossrefapi.exe cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
+	env  GOOS=windows GOARCH=amd64 go build -o dist/bin/crossrefapi.exe cmd/crossrefapi/crossrefapi.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-windows-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/macos-amd64:
 	mkdir -p dist/bin
-	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/crossrefapi cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
+	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/crossrefapi cmd/crossrefapi/crossrefapi.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-macos-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/macos-arm64:
 	mkdir -p dist/bin
-	env  GOOS=darwin GOARCH=arm64 go build -o dist/bin/crossrefapi cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
+	env  GOOS=darwin GOARCH=arm64 go build -o dist/bin/crossrefapi cmd/crossrefapi/crossrefapi.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-macos-arm64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/raspbian-arm7:
 	mkdir -p dist/bin
-	env  GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/crossrefapi cmd/crossrefapi/crossrefapi.go cmd/crossrefapi/assets.go
+	env  GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/crossrefapi cmd/crossrefapi/crossrefapi.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-raspbian-arm7.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 

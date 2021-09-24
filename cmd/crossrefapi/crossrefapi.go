@@ -21,45 +21,47 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
 	"path"
 	"strings"
 
 	// Caltech Library packages
-	"github.com/caltechlibrary/cli"
 	"github.com/caltechlibrary/crossrefapi"
 )
 
 var (
-	synopsis = `
-_%s_ can retrieve "types" and "works" from the CrossRef API
-`
 	description = `
-_%s_ is a command line utility to retrieve "types" and "works" objects
+USAGE
+
+    {appName}  [OPTIONS] DOI
+
+SYNOPSIS
+
+{appName} can retrieve "types" and "works" from the CrossRef API
+
+DETAIL
+
+{appName} is a command line utility to retrieve "types" and "works" objects
 from the CrossRef API. It follows the etiquette suggested at
 
-` + "```" + `
     https://github.com/CrossRef/rest-api-doc#etiquette
-` + "```" + `
+
 `
 	examples = `
 Return the types of objects in CrossRef (e.g. journal articles)
 
-` + "```" + `
-    %s -mailto="jdoe@example.edu" types
-` + "```" + `
+    {appName} -mailto="jdoe@example.edu" types
 
 Return the works for the doi "10.1037/0003-066x.59.1.29"
 
-` + "```" + `
-    %s -mailto="jdoe@example.edu" \
+    {appName} -mailto="jdoe@example.edu" \
         works "10.1037/0003-066x.59.1.29"
-` + "```" + `
 `
 
 	license = `
-%s %s
+{appName} {version}
 
 Copyright (c) 2021, Caltech
 All rights not granted herein are expressly reserved by Caltech.
@@ -75,8 +77,6 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 `
 	// Standard Options
-	generateMarkdown bool
-	generateManPage  bool
 	showHelp         bool
 	showLicense      bool
 	showVersion      bool
@@ -106,62 +106,40 @@ func pop(args []string) (string, []string) {
 
 func main() {
 	appName := path.Base(os.Args[0])
-	app := cli.NewCli(crossrefapi.Version)
-	app.SetParams("types|works DOI")
+	flagSet := flag.NewFlagSet(appName, flag.ContinueOnError)
 
-	app.AddHelp("synopsis", []byte(fmt.Sprintf(synopsis, appName)))
-	app.AddHelp("description", []byte(fmt.Sprintf(description, appName)))
-	app.AddHelp("examples", []byte(fmt.Sprintf(examples, appName, appName)))
-	app.AddHelp("license", []byte(fmt.Sprintf(license, appName, crossrefapi.Version)))
-	for k, v := range Help {
-		app.AddHelp(k, v)
-	}
 
 	// Standard Options
-	app.BoolVar(&showHelp, "h,help", false, "display help")
-	app.BoolVar(&showLicense, "l,license", false, "display license")
-	app.BoolVar(&showVersion, "v,version", false, "display app version")
-	app.BoolVar(&generateMarkdown, "generate-markdown", false, "output documentation in Markdown")
-	app.BoolVar(&generateManPage, "generate-manpage", false, "generate man page")
+	flagSet.BoolVar(&showHelp, "h", false, "display help")
+	flagSet.BoolVar(&showHelp, "h,help", false, "display help")
+	flagSet.BoolVar(&showLicense, "license", false, "display license")
+	flagSet.BoolVar(&showVersion, "version", false, "display app version")
 
 	// Application Options
-	app.StringVar(&mailto, "m,mailto", "", "set the mailto value for API access")
+	flagSet.StringVar(&mailto, "m", "", "set the mailto value for API access")
+	flagSet.StringVar(&mailto, "m,mailto", "", "set the mailto value for API access")
 
-	app.Parse()
-	args := app.Args()
+	flagSet.Parse(os.Args)
+	args := flagSet.Args()
 
-	if generateMarkdown {
-		app.GenerateMarkdown(os.Stdout)
-		os.Exit(0)
-	}
-	if generateManPage {
-		app.GenerateManPage(os.Stdout)
-		os.Exit(0)
-	}
 
 	if showHelp {
-		if showHelp {
-			if len(args) > 0 {
-				fmt.Fprintf(os.Stdout, app.Help(args...))
-			} else {
-				app.Usage(os.Stdout)
-			}
-			os.Exit(0)
-		}
+		crossrefapi.DisplayUsage(os.Stdout, appName, flagSet, description, examples, license)
+		os.Exit(0)
 	}
 
 	if showLicense {
-		fmt.Fprintln(os.Stdout, app.License())
+		crossrefapi.DisplayLicense(os.Stdout, appName, license)
 		os.Exit(0)
 	}
 
 	if showVersion {
-		fmt.Fprintln(os.Stdout, app.Version())
+		crossrefapi.DisplayVersion(os.Stdout, appName)
 		os.Exit(0)
 	}
 
 	if len(args) < 1 {
-		app.Usage(os.Stderr)
+		crossrefapi.DisplayUsage(os.Stderr, appName, flagSet, description, examples, license)
 		os.Exit(1)
 	}
 
