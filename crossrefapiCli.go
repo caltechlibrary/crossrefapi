@@ -29,6 +29,5 @@ func DisplayUsage(out io.Writer, appName string, flagSet *flag.FlagSet, descript
 	if license != "" {
 		DisplayLicense(out, appName, license)
 	} 
-	DisplayVersion(out, appName)
 }
 

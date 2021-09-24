@@ -1,4 +1,4 @@
 package crossrefapi
 
-const Version = "v1.0.1-pre"
+const Version = "v1.0.1"
 
