@@ -9,7 +9,8 @@ with the public API at api.crossref.org.
 ## Go package example
 
 ```go
-    client, err := crossrefapi.NewCrossRefClient("jane.doe@library.example.edu")
+    appName := path.Base(os.Args[0])
+    client, err := crossrefapi.NewCrossRefClient(appName, "jane.doe@library.example.edu")
     if err != nil {
         // handle error...
     }
