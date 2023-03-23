@@ -128,7 +128,7 @@ func main() {
 	}
 
 	if showLicense {
-		crossrefapi.DisplayLicense(os.Stdout, appName, license)
+		crossrefapi.DisplayLicense(os.Stdout, appName, crossrefapi.LicenseText)
 		os.Exit(0)
 	}
 

@@ -7,8 +7,7 @@ VERSION = $(shell grep '"version":' codemeta.json | cut -d \" -f 4)
 
 BRANCH = $(shell git branch | grep '* ' | cut -d\  -f 2)
 
-
-CODEMETA2CFF = $(shell which codemeta2cff)
+PANDOC = $(shell which pandoc)
 
 PROJECT_LIST = crossrefapi
 
@@ -19,16 +18,21 @@ ifeq ($(OS), Windows)
 	EXT = .exe
 endif
 
-build: version.go $(PROJECT_LIST)
+build: version.go $(PROJECT_LIST) CITATION.cff about.md
 
 version.go: .FORCE
-	@echo "package $(PROJECT)" >version.go
-	@echo '' >>version.go
-	@echo 'const Version = "v$(VERSION)"' >>version.go
-	@echo '' >>version.go
-	@git add version.go
-	$(CODEMETA2CFF)
-	
+	@echo	"package	$(PROJECT)"	>version.go
+	@echo	''	>>version.go
+	@echo	'const	('	>>version.go
+	@echo	'	Version	=	"$(VERSION)"'	>>version.go
+	@echo	''	>>version.go
+	@echo	'	LicenseText	=	`'	>>version.go
+	@cat	LICENSE	>>version.go
+	@echo	'`'	>>version.go
+	@echo	')'	>>version.go
+	@echo	''	>>version.go
+	@git	add	version.go
+
 crossrefapi$(EXT): bin/crossrefapi$(EXT)
 
 bin/crossrefapi$(EXT): crossrefapi.go cmd/crossrefapi/crossrefapi.go
@@ -38,8 +42,19 @@ bin/crossrefapi$(EXT): crossrefapi.go cmd/crossrefapi/crossrefapi.go
 install: 
 	env GOBIN=$(GOPATH)/bin go install cmd/crossrefapi/crossrefapi.go
 
-website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
+website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css about.md
 	bash mk-website.bash
+
+
+CITATION.cff: codemeta.json
+	@cat	codemeta.json	|	sed	-E	's/"@context"/"at__context"/g;s/"@type"/"at__type"/g;s/"@id"/"at__id"/g'	>_codemeta.json
+	@if	[	-f	$(PANDOC)	];	then	echo	""	|	$(PANDOC)	--metadata	title="Cite	$(PROJECT)"	--metadata-file=_codemeta.json	--template=codemeta-cff.tmpl	>CITATION.cff;	fi
+
+about.md: codemeta.json
+	@cat	codemeta.json	|	sed	-E	's/"@context"/"at__context"/g;s/"@type"/"at__type"/g;s/"@id"/"at__id"/g'	>_codemeta.json
+	@if	[	-f	$(PANDOC)	];	then	echo	""	|	pandoc	--metadata-file=_codemeta.json	--template	codemeta-md.tmpl	>about.md	2>/dev/null;	fi
+	@if	[	-f	_codemeta.json	];	then	rm	_codemeta.json;	fi
+
 
 test: clean bin/crossrefapi$(EXT)
 	go test -mailto="jane.doe@example.edu"
