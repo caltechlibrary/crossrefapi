@@ -664,6 +664,12 @@ func isSameIdentifiers(i1 []*Identifier, i2 []*Identifier) bool {
 }
 
 func (g *Group) IsSame(t *Group) bool {
+	if g == nil && t == nil {
+		return true
+	}
+	if g == nil || t == nil {
+		return false
+	}
 	if g.Label != t.Label {
 		return false
 	}
@@ -680,7 +686,7 @@ func (a *Assertion) IsSame(t *Assertion) bool {
 	if a.Name != t.Name {
 		return false
 	}
-	return (a.Value != t.Value)
+	return (a.Value == t.Value)
 }
 
 func (c *ContentDomain) IsSame(t *ContentDomain) bool {
