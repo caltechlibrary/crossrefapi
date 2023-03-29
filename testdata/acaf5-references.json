@@ -1,0 +1,320 @@
+[
+  {
+    "DOI": "10.1046/j.1365-8711.1999.02978.x",
+    "author": "Arnouts",
+    "doi-asserted-by": "publisher",
+    "first-page": "540",
+    "journal-title": "MNRAS",
+    "key": "apjacacf5bib1",
+    "volume": "310",
+    "year": "1999"
+  },
+  {
+    "author": "Bolzonella",
+    "first-page": "476",
+    "journal-title": "A&A",
+    "key": "apjacacf5bib2",
+    "volume": "363",
+    "year": "2000"
+  },
+  {
+    "DOI": "10.1023/A:1010933404324",
+    "author": "Breiman",
+    "doi-asserted-by": "publisher",
+    "first-page": "5",
+    "journal-title": "Mach. Learn.",
+    "key": "apjacacf5bib3",
+    "volume": "45",
+    "year": "2001"
+  },
+  {
+    "DOI": "10.1046/j.1365-8711.2003.06897.x",
+    "author": "Bruzual",
+    "doi-asserted-by": "publisher",
+    "first-page": "1000",
+    "journal-title": "MNRAS",
+    "key": "apjacacf5bib4",
+    "volume": "344",
+    "year": "2003"
+  },
+  {
+    "DOI": "10.1086/308692",
+    "author": "Calzetti",
+    "doi-asserted-by": "publisher",
+    "first-page": "682",
+    "journal-title": "ApJ",
+    "key": "apjacacf5bib5",
+    "volume": "533",
+    "year": "2000"
+  },
+  {
+    "DOI": "10.1093/mnras/stt2456",
+    "author": "Carrasco Kind",
+    "doi-asserted-by": "publisher",
+    "first-page": "3409",
+    "journal-title": "MNRAS",
+    "key": "apjacacf5bib6",
+    "volume": "438",
+    "year": "2014"
+  },
+  {
+    "DOI": "10.1086/376392",
+    "author": "Chabrier",
+    "doi-asserted-by": "publisher",
+    "first-page": "763",
+    "journal-title": "PASP",
+    "key": "apjacacf5bib7",
+    "volume": "115",
+    "year": "2003"
+  },
+  {
+    "DOI": "10.1093/mnras/stz2486",
+    "author": "Davidzon",
+    "doi-asserted-by": "publisher",
+    "first-page": "4817",
+    "journal-title": "MNRAS",
+    "key": "apjacacf5bib8",
+    "volume": "489",
+    "year": "2019"
+  },
+  {
+    "DOI": "10.1051/0004-6361/201936695",
+    "author": "Dobbels",
+    "doi-asserted-by": "publisher",
+    "first-page": "A57",
+    "journal-title": "A&A",
+    "key": "apjacacf5bib9",
+    "volume": "634",
+    "year": "2020"
+  },
+  {
+    "DOI": "10.1051/0004-6361/202039403",
+    "author": "Desprez",
+    "doi-asserted-by": "publisher",
+    "first-page": "A31",
+    "journal-title": "A&A",
+    "key": "apjacacf5bib10",
+    "volume": "644",
+    "year": "2020"
+  },
+  {
+    "DOI": "10.3847/2041-8213/ab3418",
+    "author": "Hemmati",
+    "doi-asserted-by": "publisher",
+    "first-page": "L14",
+    "journal-title": "ApJL",
+    "key": "apjacacf5bib11",
+    "volume": "881",
+    "year": "2019"
+  },
+  {
+    "author": "Hoaglin",
+    "key": "apjacacf5bib12",
+    "year": "1983"
+  },
+  {
+    "DOI": "10.1051/0004-6361/201425176",
+    "author": "Ilbert",
+    "doi-asserted-by": "publisher",
+    "first-page": "A2",
+    "journal-title": "A&A",
+    "key": "apjacacf5bib13",
+    "volume": "579",
+    "year": "2015"
+  },
+  {
+    "DOI": "10.1051/0004-6361:20065138",
+    "author": "Ilbert",
+    "doi-asserted-by": "publisher",
+    "first-page": "841",
+    "journal-title": "A&A",
+    "key": "apjacacf5bib14",
+    "volume": "457",
+    "year": "2006"
+  },
+  {
+    "DOI": "10.1051/0004-6361/201321100",
+    "author": "Ilbert",
+    "doi-asserted-by": "publisher",
+    "first-page": "A55",
+    "journal-title": "A&A",
+    "key": "apjacacf5bib15",
+    "volume": "556",
+    "year": "2013"
+  },
+  {
+    "DOI": "10.1007/BF00337288",
+    "author": "Kohonen",
+    "doi-asserted-by": "publisher",
+    "first-page": "59",
+    "journal-title": "Biol. Cybern.",
+    "key": "apjacacf5bib16",
+    "volume": "43",
+    "year": "1982"
+  },
+  {
+    "DOI": "10.1103/PhysRevE.69.066138",
+    "author": "Kraskov",
+    "doi-asserted-by": "publisher",
+    "journal-title": "PhRvE",
+    "key": "apjacacf5bib17",
+    "volume": "69",
+    "year": "2004"
+  },
+  {
+    "DOI": "10.3847/0067-0049/224/2/24",
+    "author": "Laigle",
+    "doi-asserted-by": "publisher",
+    "first-page": "24",
+    "journal-title": "ApJS",
+    "key": "apjacacf5bib18",
+    "volume": "224",
+    "year": "2016"
+  },
+  {
+    "author": "Laureijs",
+    "key": "apjacacf5bib19",
+    "year": "2011"
+  },
+  {
+    "DOI": "10.1088/0004-637X/813/1/53",
+    "author": "Masters",
+    "doi-asserted-by": "publisher",
+    "first-page": "53",
+    "journal-title": "ApJ",
+    "key": "apjacacf5bib20",
+    "volume": "813",
+    "year": "2015"
+  },
+  {
+    "DOI": "10.3847/1538-4357/aa6f08",
+    "author": "Masters",
+    "doi-asserted-by": "publisher",
+    "first-page": "111",
+    "journal-title": "ApJ",
+    "key": "apjacacf5bib21",
+    "volume": "841",
+    "year": "2017"
+  },
+  {
+    "DOI": "10.3847/1538-4357/ab184d",
+    "author": "Masters",
+    "doi-asserted-by": "publisher",
+    "first-page": "81",
+    "journal-title": "ApJ",
+    "key": "apjacacf5bib22",
+    "volume": "877",
+    "year": "2019"
+  },
+  {
+    "DOI": "10.1051/0004-6361/201219507",
+    "author": "McCracken",
+    "doi-asserted-by": "publisher",
+    "first-page": "A156",
+    "journal-title": "A&A",
+    "key": "apjacacf5bib23",
+    "volume": "544",
+    "year": "2012"
+  },
+  {
+    "author": "McInnes",
+    "key": "apjacacf5bib24",
+    "year": "2018"
+  },
+  {
+    "DOI": "10.1051/0004-6361/202142361",
+    "author": "Moneti",
+    "doi-asserted-by": "publisher",
+    "first-page": "A126",
+    "journal-title": "A&A",
+    "key": "apjacacf5bib25",
+    "volume": "658",
+    "year": "2022"
+  },
+  {
+    "DOI": "10.1093/mnras/stab164",
+    "author": "Mucesh",
+    "doi-asserted-by": "publisher",
+    "first-page": "2770",
+    "journal-title": "MNRAS",
+    "key": "apjacacf5bib26",
+    "volume": "502",
+    "year": "2021"
+  },
+  {
+    "author": "Pedregosa",
+    "first-page": "2825",
+    "journal-title": "J. Mach. Learn. Res.",
+    "key": "apjacacf5bib27",
+    "volume": "12",
+    "year": "2011"
+  },
+  {
+    "DOI": "10.1088/0004-637X/737/2/103",
+    "author": "Schlafly",
+    "doi-asserted-by": "publisher",
+    "first-page": "103",
+    "journal-title": "ApJ",
+    "key": "apjacacf5bib28",
+    "volume": "737",
+    "year": "2011"
+  },
+  {
+    "DOI": "10.1086/516585",
+    "author": "Scoville",
+    "doi-asserted-by": "publisher",
+    "first-page": "1",
+    "journal-title": "ApJS",
+    "key": "apjacacf5bib29",
+    "volume": "172",
+    "year": "2007"
+  },
+  {
+    "DOI": "10.1002/j.1538-7305.1948.tb01338.x",
+    "author": "Shannon",
+    "doi-asserted-by": "publisher",
+    "first-page": "379",
+    "journal-title": "BSTJ",
+    "key": "apjacacf5bib30",
+    "volume": "27",
+    "year": "1948"
+  },
+  {
+    "DOI": "10.3847/1538-4357/abd179",
+    "author": "Simet",
+    "doi-asserted-by": "publisher",
+    "first-page": "47",
+    "journal-title": "ApJ",
+    "key": "apjacacf5bib31",
+    "volume": "908",
+    "year": "2021"
+  },
+  {
+    "DOI": "10.3847/1538-4357/ab76be",
+    "author": "Steinhardt",
+    "doi-asserted-by": "publisher",
+    "first-page": "136",
+    "journal-title": "ApJ",
+    "key": "apjacacf5bib32",
+    "volume": "891",
+    "year": "2020"
+  },
+  {
+    "author": "van der Maaten",
+    "first-page": "2579",
+    "journal-title": "J. Mach. Learn. Res.",
+    "key": "apjacacf5bib33",
+    "volume": "9",
+    "year": "2008"
+  },
+  {
+    "DOI": "10.3847/1538-4365/ac3078",
+    "author": "Weaver",
+    "doi-asserted-by": "publisher",
+    "first-page": "11",
+    "journal-title": "ApJS",
+    "key": "apjacacf5bib34",
+    "volume": "258",
+    "year": "2022"
+  }
+]

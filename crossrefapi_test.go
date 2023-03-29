@@ -100,6 +100,7 @@ func TestClient(t *testing.T) {
 		t.Errorf("expected status code 200, got %d -> %q", api.StatusCode, api.Status)
 		t.FailNow()
 	}
+	/*
 	obj1 = nil
 	err = json.Unmarshal(src, &obj1)
 	if err != nil {
@@ -119,6 +120,33 @@ func TestClient(t *testing.T) {
 		t.Errorf("expected equal lengths for obj1, obj2 ->\n%+v, \n%+v", obj1, obj2)
 		t.FailNow()
 	}
+	*/
+	work1 := new(Works)
+	err = json.Unmarshal(src, &work1)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	if work1 == nil {
+		t.Errorf("expected unmarshaled object, got nil")
+		t.FailNow()
+	}
+	work2, err := api.Works(doi_url)
+	if work2 == nil {
+		t.Errorf("expected an non-nil Object from Types(), got nil but no error")
+		t.FailNow()
+	}
+	if ! work1.Message.IsSame(work2.Message) {
+		t.Errorf("expected work.Message 1 & 2 don't match\n%+v, got\n%+v\n", work1.Message, work2.Message)
+		t.FailNow()
+
+	}
+	/*
+	if ! work1.IsSame(work2) {
+		t.Errorf("expected work 1 & 2 don't match\n%+v, got\n%+v\n", work1, work2)
+		t.FailNow()
+	}
+	*/
 }
 
 func TestMain(m *testing.M) {

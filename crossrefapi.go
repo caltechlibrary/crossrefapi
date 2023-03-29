@@ -158,12 +158,13 @@ func (c *CrossRefClient) WorksJSON(doi string) ([]byte, error) {
 }
 
 // Works return the Work unmarshaled into a Object (i.e. map[string]interface{})
-func (c *CrossRefClient) Works(doi string) (Object, error) {
+func (c *CrossRefClient) Works(doi string) (*Works, error) {
 	src, err := c.WorksJSON(doi)
 	if err != nil {
 		return nil, err
 	}
 	if len(src) > 0 {
+		/*
 		object := make(Object)
 		//FIXME: need to decode so I get a nice json.Number object
 		err = jsonDecode(src, &object)
@@ -171,6 +172,15 @@ func (c *CrossRefClient) Works(doi string) (Object, error) {
 			return nil, err
 		}
 		return object, nil
+		*/
+		work := &Works{}
+		dec := json.NewDecoder(bytes.NewReader(src))
+		dec.UseNumber()
+		err := dec.Decode(&work)
+		if err != nil {
+			return nil, err
+		}
+		return work, nil
 	}
 	return nil, nil
 }
