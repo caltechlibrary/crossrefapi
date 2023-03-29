@@ -52,5 +52,4 @@ dataset.egg-info
 py/test_*
 idxdefs/*
 *.bak
-*.json
-_*
+_codemeta.json
