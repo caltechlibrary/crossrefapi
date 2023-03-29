@@ -47,8 +47,22 @@ $(MAN_PAGES): .FORCE
 	mkdir -p man/man1
 	$(PANDOC) $@.md --from markdown --to man -s >man/man1/$@
 
-install:
-	env GOBIN=$(GOPATH)/bin go install cmd/crossrefapi/crossrefapi.go
+install: build
+	@echo "Installing programs in $(PREFIX)/bin"
+	@for FNAME in $(PROGRAMS); do if [ -f "./bin/$${FNAME}$(EXT)" ]; then mv -v "./bin/$${FNAME}$(EXT)" "$(PREFIX)/bin/$${FNAME}$(EXT)"; fi; done
+	@echo ""
+	@echo "Make sure $(PREFIX)/bin is in your PATH"
+	@echo "Installing man page in $(PREFIX)/man"
+	@for FNAME in $(MAN_PAGES); do if [ -f "./man/man1/$${FNAME}" ]; then cp -v "./man/man1/$${FNAME}" "$(PREFIX)/man/man1/$${FNAME}"; fi; done
+	@echo ""
+	@echo "Make sure $(PREFIX)/man is in your MANPATH"
+
+uninstall: .FORCE
+	@echo "Removing programs in $(PREFIX)/bin"
+	@for FNAME in $(PROGRAMS); do if [ -f "$(PREFIX)/bin/$${FNAME}$(EXT)" ]; then rm -v "$(PREFIX)/bin/$${FNAME}$(EXT)"; fi; done
+	@echo "Removing man pages in $(PREFIX)/man"
+	@for FNAME in $(MAN_PAGES); do if [ -f "$(PREFIX)/man/man1/$${FNAME}" ]; then rm -v "$(PREFIX)/man/man1/$${FNAME}"; fi; done
+
 
 website: page.tmpl codemeta.json README.md INSTALL.md LICENSE css/site.css about.md
 	make -f website.mak
