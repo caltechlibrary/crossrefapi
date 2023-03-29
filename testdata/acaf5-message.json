@@ -1,0 +1,763 @@
+{
+  "DOI": "10.3847/1538-4357/acacf5",
+  "ISSN": [
+    "0004-637X",
+    "1538-4357"
+  ],
+  "URL": "http://dx.doi.org/10.3847/1538-4357/acacf5",
+  "abstract": "<jats:title>Abstract</jats:title><jats:p>We present a new method based on information theory to find the optimal number of bands required to measure the physical properties of galaxies with desired accuracy. As a proof of concept, using the recently updated COSMOS catalog (COSMOS2020), we identify the most relevant wave bands for measuring the physical properties of galaxies in a Hawaii Two-0- (H20) and UVISTA-like survey for a sample of <jats:italic>i</jats:italic> &lt; 25 AB mag galaxies. We find that with the available <jats:italic>i</jats:italic>-band fluxes, <jats:italic>r</jats:italic>, <jats:italic>u</jats:italic>, IRAC/<jats:italic>ch</jats:italic>2, and <jats:italic>z</jats:italic> bands provide most of the information regarding the redshift with importance decreasing from <jats:italic>r</jats:italic> band to <jats:italic>z</jats:italic> band. We also find that for the same sample, IRAC/<jats:italic>ch</jats:italic>2, <jats:italic>Y</jats:italic>, <jats:italic>r</jats:italic>, and <jats:italic>u</jats:italic> bands are the most relevant bands in stellar-mass measurements with decreasing order of importance. Investigating the intercorrelation between the bands, we train a model to predict UVISTA observations in near-IR from H20-like observations. We find that magnitudes in the <jats:italic>YJH</jats:italic> bands can be simulated/predicted with an accuracy of 1<jats:italic>σ</jats:italic> mag scatter ≲0.2 for galaxies brighter than 24 AB mag in near-IR bands. One should note that these conclusions depend on the selection criteria of the sample. For any new sample of galaxies with a different selection, these results should be remeasured. Our results suggest that in the presence of a limited number of bands, a machine-learning model trained over the population of observed galaxies with extensive spectral coverage outperforms template fitting. Such a machine-learning model maximally comprises the information acquired over available extensive surveys and breaks degeneracies in the parameter space of template fitting inevitable in the presence of a few bands.</jats:p>",
+  "assertion": [
+    {
+      "label": "Article Title",
+      "name": "article_title",
+      "value": "A Machine-learning Approach to Predict Missing Flux Densities in Multiband Galaxy Surveys"
+    },
+    {
+      "label": "Journal Title",
+      "name": "journal_title",
+      "value": "The Astrophysical Journal"
+    },
+    {
+      "label": "Article Type",
+      "name": "article_type",
+      "value": "paper"
+    },
+    {
+      "label": "Copyright Information",
+      "name": "copyright_information",
+      "value": "© 2023. The Author(s). Published by the American Astronomical Society."
+    },
+    {
+      "group": {
+        "label": "Publication dates",
+        "name": "publication_dates"
+      },
+      "label": "Date Received",
+      "name": "date_received",
+      "value": "2022-01-27"
+    },
+    {
+      "group": {
+        "label": "Publication dates",
+        "name": "publication_dates"
+      },
+      "label": "Date Accepted",
+      "name": "date_accepted",
+      "value": "2022-08-29"
+    },
+    {
+      "group": {
+        "label": "Publication dates",
+        "name": "publication_dates"
+      },
+      "label": "Online publication date",
+      "name": "date_epub",
+      "value": "2023-01-17"
+    }
+  ],
+  "author": [
+    {
+      "ORCID": "http://orcid.org/0000-0003-3691-937X",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Chartab",
+      "given": "Nima",
+      "sequence": "first"
+    },
+    {
+      "affiliation": [],
+      "family": "Mobasher",
+      "given": "Bahram",
+      "sequence": "additional"
+    },
+    {
+      "affiliation": [],
+      "family": "Cooray",
+      "given": "Asantha R.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0003-2226-5395",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Hemmati",
+      "given": "Shoubaneh",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0002-0364-1159",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Sattari",
+      "given": "Zahra",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0001-7113-2738",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Ferguson",
+      "given": "Henry C.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0002-1233-9998",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Sanders",
+      "given": "David B.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0003-1614-196X",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Weaver",
+      "given": "John R.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0003-2686-9241",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Stern",
+      "given": "Daniel K.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0002-9489-7765",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "McCracken",
+      "given": "Henry J.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0001-5382-6138",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Masters",
+      "given": "Daniel C.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0003-3631-7176",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Toft",
+      "given": "Sune",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0003-3578-6843",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Capak",
+      "given": "Peter L.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0002-2951-7519",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Davidzon",
+      "given": "Iary",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0001-5414-5131",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Dickinson",
+      "given": "Mark E.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0002-4485-8549",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Rhodes",
+      "given": "Jason",
+      "sequence": "additional"
+    },
+    {
+      "affiliation": [],
+      "family": "Moneti",
+      "given": "Andrea",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0002-7303-4397",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Ilbert",
+      "given": "Olivier",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0001-5680-2326",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Zalesky",
+      "given": "Lukas",
+      "sequence": "additional"
+    },
+    {
+      "affiliation": [],
+      "family": "McPartland",
+      "given": "Conor J. R.",
+      "sequence": "additional"
+    },
+    {
+      "affiliation": [],
+      "family": "Szapudi",
+      "given": "István",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0002-6610-2048",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Koekemoer",
+      "given": "Anton M.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0002-7064-5424",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Teplitz",
+      "given": "Harry I.",
+      "sequence": "additional"
+    },
+    {
+      "ORCID": "http://orcid.org/0000-0002-7831-8751",
+      "affiliation": [],
+      "authenticated-orcid": true,
+      "family": "Giavalisco",
+      "given": "Mauro",
+      "sequence": "additional"
+    }
+  ],
+  "container-title": [
+    "The Astrophysical Journal"
+  ],
+  "content-domain": {
+    "crossmark-restriction": false,
+    "domain": [
+      "iopscience.iop.org"
+    ]
+  },
+  "created": {
+    "date-parts": [
+      [
+        2023,
+        1,
+        18
+      ]
+    ],
+    "date-time": "2023-01-18T12:18:32Z",
+    "timestamp": 1674044312000
+  },
+  "deposited": {
+    "date-parts": [
+      [
+        2023,
+        1,
+        18
+      ]
+    ],
+    "date-time": "2023-01-18T12:18:36Z",
+    "timestamp": 1674044316000
+  },
+  "indexed": {
+    "date-parts": [
+      [
+        2023,
+        1,
+        19
+      ]
+    ],
+    "date-time": "2023-01-19T06:15:40Z",
+    "timestamp": 1674108940059
+  },
+  "is-referenced-by-count": 0,
+  "issn-type": [
+    {
+      "type": "print",
+      "value": "0004-637X"
+    },
+    {
+      "type": "electronic",
+      "value": "1538-4357"
+    }
+  ],
+  "issue": "2",
+  "issued": {
+    "date-parts": [
+      [
+        2023,
+        1,
+        1
+      ]
+    ]
+  },
+  "journal-issue": {
+    "issue": "2",
+    "published-online": {
+      "date-parts": [
+        [
+          2023,
+          1,
+          17
+        ]
+      ]
+    },
+    "published-print": {
+      "date-parts": [
+        [
+          2023,
+          1,
+          1
+        ]
+      ]
+    }
+  },
+  "license": [
+    {
+      "URL": "http://creativecommons.org/licenses/by/4.0/",
+      "content-version": "vor",
+      "delay-in-days": 16,
+      "start": {
+        "date-parts": [
+          [
+            2023,
+            1,
+            17
+          ]
+        ],
+        "date-time": "2023-01-17T00:00:00Z",
+        "timestamp": 1673913600000
+      }
+    },
+    {
+      "URL": "https://iopscience.iop.org/info/page/text-and-data-mining",
+      "content-version": "tdm",
+      "delay-in-days": 16,
+      "start": {
+        "date-parts": [
+          [
+            2023,
+            1,
+            17
+          ]
+        ],
+        "date-time": "2023-01-17T00:00:00Z",
+        "timestamp": 1673913600000
+      }
+    }
+  ],
+  "link": [
+    {
+      "URL": "https://iopscience.iop.org/article/10.3847/1538-4357/acacf5",
+      "content-type": "text/html",
+      "content-version": "vor",
+      "intended-application": "text-mining"
+    },
+    {
+      "URL": "https://iopscience.iop.org/article/10.3847/1538-4357/acacf5/pdf",
+      "content-type": "application/pdf",
+      "content-version": "vor",
+      "intended-application": "text-mining"
+    },
+    {
+      "URL": "https://iopscience.iop.org/article/10.3847/1538-4357/acacf5/pdf",
+      "content-type": "application/pdf",
+      "content-version": "vor",
+      "intended-application": "syndication"
+    },
+    {
+      "URL": "https://iopscience.iop.org/article/10.3847/1538-4357/acacf5/pdf",
+      "content-type": "application/pdf",
+      "content-version": "vor",
+      "intended-application": "similarity-checking"
+    }
+  ],
+  "member": "2208",
+  "original-title": [],
+  "page": "91",
+  "prefix": "10.3847",
+  "published": {
+    "date-parts": [
+      [
+        2023,
+        1,
+        1
+      ]
+    ]
+  },
+  "published-online": {
+    "date-parts": [
+      [
+        2023,
+        1,
+        17
+      ]
+    ]
+  },
+  "published-print": {
+    "date-parts": [
+      [
+        2023,
+        1,
+        1
+      ]
+    ]
+  },
+  "publisher": "American Astronomical Society",
+  "reference": [
+    {
+      "DOI": "10.1046/j.1365-8711.1999.02978.x",
+      "author": "Arnouts",
+      "doi-asserted-by": "publisher",
+      "first-page": "540",
+      "journal-title": "MNRAS",
+      "key": "apjacacf5bib1",
+      "volume": "310",
+      "year": "1999"
+    },
+    {
+      "author": "Bolzonella",
+      "first-page": "476",
+      "journal-title": "A&A",
+      "key": "apjacacf5bib2",
+      "volume": "363",
+      "year": "2000"
+    },
+    {
+      "DOI": "10.1023/A:1010933404324",
+      "author": "Breiman",
+      "doi-asserted-by": "publisher",
+      "first-page": "5",
+      "journal-title": "Mach. Learn.",
+      "key": "apjacacf5bib3",
+      "volume": "45",
+      "year": "2001"
+    },
+    {
+      "DOI": "10.1046/j.1365-8711.2003.06897.x",
+      "author": "Bruzual",
+      "doi-asserted-by": "publisher",
+      "first-page": "1000",
+      "journal-title": "MNRAS",
+      "key": "apjacacf5bib4",
+      "volume": "344",
+      "year": "2003"
+    },
+    {
+      "DOI": "10.1086/308692",
+      "author": "Calzetti",
+      "doi-asserted-by": "publisher",
+      "first-page": "682",
+      "journal-title": "ApJ",
+      "key": "apjacacf5bib5",
+      "volume": "533",
+      "year": "2000"
+    },
+    {
+      "DOI": "10.1093/mnras/stt2456",
+      "author": "Carrasco Kind",
+      "doi-asserted-by": "publisher",
+      "first-page": "3409",
+      "journal-title": "MNRAS",
+      "key": "apjacacf5bib6",
+      "volume": "438",
+      "year": "2014"
+    },
+    {
+      "DOI": "10.1086/376392",
+      "author": "Chabrier",
+      "doi-asserted-by": "publisher",
+      "first-page": "763",
+      "journal-title": "PASP",
+      "key": "apjacacf5bib7",
+      "volume": "115",
+      "year": "2003"
+    },
+    {
+      "DOI": "10.1093/mnras/stz2486",
+      "author": "Davidzon",
+      "doi-asserted-by": "publisher",
+      "first-page": "4817",
+      "journal-title": "MNRAS",
+      "key": "apjacacf5bib8",
+      "volume": "489",
+      "year": "2019"
+    },
+    {
+      "DOI": "10.1051/0004-6361/201936695",
+      "author": "Dobbels",
+      "doi-asserted-by": "publisher",
+      "first-page": "A57",
+      "journal-title": "A&A",
+      "key": "apjacacf5bib9",
+      "volume": "634",
+      "year": "2020"
+    },
+    {
+      "DOI": "10.1051/0004-6361/202039403",
+      "author": "Desprez",
+      "doi-asserted-by": "publisher",
+      "first-page": "A31",
+      "journal-title": "A&A",
+      "key": "apjacacf5bib10",
+      "volume": "644",
+      "year": "2020"
+    },
+    {
+      "DOI": "10.3847/2041-8213/ab3418",
+      "author": "Hemmati",
+      "doi-asserted-by": "publisher",
+      "first-page": "L14",
+      "journal-title": "ApJL",
+      "key": "apjacacf5bib11",
+      "volume": "881",
+      "year": "2019"
+    },
+    {
+      "author": "Hoaglin",
+      "key": "apjacacf5bib12",
+      "year": "1983"
+    },
+    {
+      "DOI": "10.1051/0004-6361/201425176",
+      "author": "Ilbert",
+      "doi-asserted-by": "publisher",
+      "first-page": "A2",
+      "journal-title": "A&A",
+      "key": "apjacacf5bib13",
+      "volume": "579",
+      "year": "2015"
+    },
+    {
+      "DOI": "10.1051/0004-6361:20065138",
+      "author": "Ilbert",
+      "doi-asserted-by": "publisher",
+      "first-page": "841",
+      "journal-title": "A&A",
+      "key": "apjacacf5bib14",
+      "volume": "457",
+      "year": "2006"
+    },
+    {
+      "DOI": "10.1051/0004-6361/201321100",
+      "author": "Ilbert",
+      "doi-asserted-by": "publisher",
+      "first-page": "A55",
+      "journal-title": "A&A",
+      "key": "apjacacf5bib15",
+      "volume": "556",
+      "year": "2013"
+    },
+    {
+      "DOI": "10.1007/BF00337288",
+      "author": "Kohonen",
+      "doi-asserted-by": "publisher",
+      "first-page": "59",
+      "journal-title": "Biol. Cybern.",
+      "key": "apjacacf5bib16",
+      "volume": "43",
+      "year": "1982"
+    },
+    {
+      "DOI": "10.1103/PhysRevE.69.066138",
+      "author": "Kraskov",
+      "doi-asserted-by": "publisher",
+      "journal-title": "PhRvE",
+      "key": "apjacacf5bib17",
+      "volume": "69",
+      "year": "2004"
+    },
+    {
+      "DOI": "10.3847/0067-0049/224/2/24",
+      "author": "Laigle",
+      "doi-asserted-by": "publisher",
+      "first-page": "24",
+      "journal-title": "ApJS",
+      "key": "apjacacf5bib18",
+      "volume": "224",
+      "year": "2016"
+    },
+    {
+      "author": "Laureijs",
+      "key": "apjacacf5bib19",
+      "year": "2011"
+    },
+    {
+      "DOI": "10.1088/0004-637X/813/1/53",
+      "author": "Masters",
+      "doi-asserted-by": "publisher",
+      "first-page": "53",
+      "journal-title": "ApJ",
+      "key": "apjacacf5bib20",
+      "volume": "813",
+      "year": "2015"
+    },
+    {
+      "DOI": "10.3847/1538-4357/aa6f08",
+      "author": "Masters",
+      "doi-asserted-by": "publisher",
+      "first-page": "111",
+      "journal-title": "ApJ",
+      "key": "apjacacf5bib21",
+      "volume": "841",
+      "year": "2017"
+    },
+    {
+      "DOI": "10.3847/1538-4357/ab184d",
+      "author": "Masters",
+      "doi-asserted-by": "publisher",
+      "first-page": "81",
+      "journal-title": "ApJ",
+      "key": "apjacacf5bib22",
+      "volume": "877",
+      "year": "2019"
+    },
+    {
+      "DOI": "10.1051/0004-6361/201219507",
+      "author": "McCracken",
+      "doi-asserted-by": "publisher",
+      "first-page": "A156",
+      "journal-title": "A&A",
+      "key": "apjacacf5bib23",
+      "volume": "544",
+      "year": "2012"
+    },
+    {
+      "author": "McInnes",
+      "key": "apjacacf5bib24",
+      "year": "2018"
+    },
+    {
+      "DOI": "10.1051/0004-6361/202142361",
+      "author": "Moneti",
+      "doi-asserted-by": "publisher",
+      "first-page": "A126",
+      "journal-title": "A&A",
+      "key": "apjacacf5bib25",
+      "volume": "658",
+      "year": "2022"
+    },
+    {
+      "DOI": "10.1093/mnras/stab164",
+      "author": "Mucesh",
+      "doi-asserted-by": "publisher",
+      "first-page": "2770",
+      "journal-title": "MNRAS",
+      "key": "apjacacf5bib26",
+      "volume": "502",
+      "year": "2021"
+    },
+    {
+      "author": "Pedregosa",
+      "first-page": "2825",
+      "journal-title": "J. Mach. Learn. Res.",
+      "key": "apjacacf5bib27",
+      "volume": "12",
+      "year": "2011"
+    },
+    {
+      "DOI": "10.1088/0004-637X/737/2/103",
+      "author": "Schlafly",
+      "doi-asserted-by": "publisher",
+      "first-page": "103",
+      "journal-title": "ApJ",
+      "key": "apjacacf5bib28",
+      "volume": "737",
+      "year": "2011"
+    },
+    {
+      "DOI": "10.1086/516585",
+      "author": "Scoville",
+      "doi-asserted-by": "publisher",
+      "first-page": "1",
+      "journal-title": "ApJS",
+      "key": "apjacacf5bib29",
+      "volume": "172",
+      "year": "2007"
+    },
+    {
+      "DOI": "10.1002/j.1538-7305.1948.tb01338.x",
+      "author": "Shannon",
+      "doi-asserted-by": "publisher",
+      "first-page": "379",
+      "journal-title": "BSTJ",
+      "key": "apjacacf5bib30",
+      "volume": "27",
+      "year": "1948"
+    },
+    {
+      "DOI": "10.3847/1538-4357/abd179",
+      "author": "Simet",
+      "doi-asserted-by": "publisher",
+      "first-page": "47",
+      "journal-title": "ApJ",
+      "key": "apjacacf5bib31",
+      "volume": "908",
+      "year": "2021"
+    },
+    {
+      "DOI": "10.3847/1538-4357/ab76be",
+      "author": "Steinhardt",
+      "doi-asserted-by": "publisher",
+      "first-page": "136",
+      "journal-title": "ApJ",
+      "key": "apjacacf5bib32",
+      "volume": "891",
+      "year": "2020"
+    },
+    {
+      "author": "van der Maaten",
+      "first-page": "2579",
+      "journal-title": "J. Mach. Learn. Res.",
+      "key": "apjacacf5bib33",
+      "volume": "9",
+      "year": "2008"
+    },
+    {
+      "DOI": "10.3847/1538-4365/ac3078",
+      "author": "Weaver",
+      "doi-asserted-by": "publisher",
+      "first-page": "11",
+      "journal-title": "ApJS",
+      "key": "apjacacf5bib34",
+      "volume": "258",
+      "year": "2022"
+    }
+  ],
+  "reference-count": 34,
+  "references-count": 34,
+  "relation": {},
+  "resource": {
+    "primary": {
+      "URL": "https://iopscience.iop.org/article/10.3847/1538-4357/acacf5"
+    }
+  },
+  "score": 1,
+  "short-container-title": [
+    "ApJ"
+  ],
+  "short-title": [],
+  "source": "Crossref",
+  "subject": [
+    "Space and Planetary Science",
+    "Astronomy and Astrophysics"
+  ],
+  "subtitle": [],
+  "title": [
+    "A Machine-learning Approach to Predict Missing Flux Densities in Multiband Galaxy Surveys"
+  ],
+  "type": "journal-article",
+  "update-policy": "http://dx.doi.org/10.1088/crossmark-policy",
+  "volume": "942"
+}

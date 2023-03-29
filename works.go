@@ -1,5 +1,9 @@
 package crossrefapi
 
+import (
+	"encoding/json"
+)
+
 // Works is a representation retrieved the CrossRef REST API using
 // the Works path and a DOI. This is based on documentaiton at
 // https://api.crossref.org/swagger-ui/index.html#/Works/get_works__doi_
@@ -72,11 +76,11 @@ type Message struct {
 	Editor              []*Person            `json:"editor,omitempty"`
 	ComponentNumber     string               `json:"component-number,omitempty"`
 	ShortTitle          []string             `json:"short-title,omitempty"`
-	Issued              *DateObject          `json:"issued,omimtempty"`
-	ISBN                []string             `json:isbn,omitempty"`
+	Issued              *DateObject          `json:"issued,omitempty"`
+	ISBN                []string             `json:"isbn,omitempty"`
 	ReferenceCount      int                  `json:"reference-count,omitempty"`
 	PartNumber          string               `json:"part-number,omitempty"`
-	JournalIssue        *Issue               `json:"journal-issue,omitempty"`
+	JournalIssue        *JournalIssue        `json:"journal-issue,omitempty"`
 	AlternativeId       []string             `json:"alternative-id,omitempty"`
 	URL                 string               `json:"URL,omitempty"`
 	Archive             []string             `json:"archive,omitempty"`
@@ -119,7 +123,7 @@ type License struct {
 	URL            string      `json:"URL,omitempty"`
 	Start          *DateObject `json:"start,omitempty"`
 	DelayInDays    int         `json:"delay-in-days,omitempty"`
-	ContentVersion string      `json:"content-version"`
+	ContentVersion string      `json:"content-version,omitempty"`
 }
 
 type Funder struct {
@@ -137,7 +141,7 @@ type ClinicalTrailNumber struct {
 
 type ContentDomain struct {
 	Domain               []string `json:"domain,omitempty"`
-	CrossmarkRestriction bool     `json:crossmark-restriction,omitempty"`
+	CrossmarkRestriction bool     `json:"crossmark-restriction,omitempty"`
 }
 
 type Review struct {
@@ -154,7 +158,7 @@ type Updated struct {
 	Label   string      `json:"label,omitempty"`
 	DOI     string      `json:"doi,omitempty"`
 	Type    string      `json:"type,omitempty"`
-	Updated *DateObject `json:"updated,omitepmty"`
+	Updated *DateObject `json:"updated,omitempty"`
 }
 
 // DateObject is a date/timestamp/action timestamp of when
@@ -216,7 +220,7 @@ type DateRange struct {
 	EndDate   *DateObject `json:"end-date,omitempty"`
 }
 
-type Issue struct {
+type JournalIssue struct {
 	Issue string `json:"issue,omitempty"`
 }
 
@@ -327,6 +331,12 @@ func (ref *Reference) IsSame(t *Reference) bool {
 }
 
 func isSameStrings(s1 []string, s2 []string) bool {
+	if s1 == nil && s2 == nil {
+		return true
+	}
+	if s1 == nil || s2 == nil {
+		return false
+	}
 	if len(s1) != len(s2) {
 		return false
 	}
@@ -680,7 +690,7 @@ func (c *ContentDomain) IsSame(t *ContentDomain) bool {
 	if c == nil || t == nil {
 		return false
 	}
-	if ! isSameStrings(c.Domain, t.Domain) {
+	if !isSameStrings(c.Domain, t.Domain) {
 		return false
 	}
 	return (c.CrossmarkRestriction == t.CrossmarkRestriction)
@@ -714,7 +724,7 @@ func (ctn *ClinicalTrailNumber) IsSame(t *ClinicalTrailNumber) bool {
 	return (ctn.Type == t.Type)
 }
 
-func (i *Issue) IsSame(t *Issue) bool {
+func (i *JournalIssue) IsSame(t *JournalIssue) bool {
 	if i == nil && t == nil {
 		return true
 	}
@@ -727,6 +737,9 @@ func (i *Issue) IsSame(t *Issue) bool {
 // IsSame checks if two works object are the same.
 // NOTE: if both objects are nil, they are considered the same.
 func (msg *Message) IsSame(t *Message) bool {
+	if msg == nil && t == nil {
+		return true
+	}
 	if msg == nil || t == nil {
 		return false
 	}
@@ -892,7 +905,7 @@ func (msg *Message) IsSame(t *Message) bool {
 	if msg.PartNumber != t.PartNumber {
 		return false
 	}
-	if msg.JournalIssue.IsSame(t.JournalIssue) {
+	if !msg.JournalIssue.IsSame(t.JournalIssue) {
 		return false
 	}
 	if !isSameStrings(msg.AlternativeId, t.AlternativeId) {
@@ -925,9 +938,506 @@ func (msg *Message) IsSame(t *Message) bool {
 	return isSameAssertions(msg.Assertion, t.Assertion)
 }
 
+// Changes takes the current Message, a new version of the Message
+// and returns a Message object with the new Message object containing
+// only the new elements.
+func (msg *Message) Changes(t *Message) *Message {
+	if msg == nil && t == nil {
+		return nil
+	}
+	if msg == nil && t != nil {
+		return t
+	}
+	// Aggregate the changed fields
+	nMsg := new(Message)
+	if !msg.Institution.IsSame(t.Institution) {
+		nMsg.Institution = t.Institution
+	}
+	if !msg.Indexed.IsSame(t.Indexed) {
+		nMsg.Indexed = t.Indexed
+	}
+	if !msg.Posted.IsSame(t.Posted) {
+		nMsg.Posted = t.Posted
+	}
+	if msg.PublisherLocation != t.PublisherLocation {
+		nMsg.PublisherLocation = t.PublisherLocation
+	}
+	if !isSameUpdatedTo(msg.UpdateTo, t.UpdateTo) {
+		nMsg.UpdateTo = t.UpdateTo
+	}
+	if !isSameOrganizations(msg.StandardsBody, t.StandardsBody) {
+		nMsg.StandardsBody = t.StandardsBody
+	}
+	if msg.EditionNumber != t.EditionNumber {
+		nMsg.EditionNumber = t.EditionNumber
+	}
+	if !isSameStrings(msg.GroupTitle, t.GroupTitle) {
+		nMsg.GroupTitle = t.GroupTitle
+	}
+	if msg.Publisher != t.Publisher {
+		nMsg.Publisher = t.Publisher
+	}
+	if msg.Issue != t.Issue {
+		nMsg.Issue = t.Issue
+	}
+	if !isSameIdentifiers(msg.IsbnType, t.IsbnType) {
+		nMsg.IsbnType = t.IsbnType
+	}
+	if !isSameLicenses(msg.License, t.License) {
+		nMsg.License = t.License
+	}
+	if !isSameFunders(msg.Funder, t.Funder) {
+		nMsg.Funder = t.Funder
+	}
+	if !msg.ContentDomain.IsSame(t.ContentDomain) {
+		nMsg.ContentDomain = t.ContentDomain
+	}
+	if !isSamePersons(msg.Chair, t.Chair) {
+		nMsg.Chair = t.Chair
+	}
+	if !isSameStrings(msg.ShortContainerTitle, t.ShortContainerTitle) {
+		nMsg.ShortContainerTitle = t.ShortContainerTitle
+	}
+	if !msg.Accepted.IsSame(t.Accepted) {
+		nMsg.Accepted = t.Accepted
+	}
+	if !msg.ContentUpdated.IsSame(t.ContentUpdated) {
+		nMsg.ContentUpdated = t.ContentUpdated
+	}
+	if !msg.PublishedPrint.IsSame(t.PublishedPrint) {
+		nMsg.PublishedPrint = t.PublishedPrint
+	}
+	if msg.Abstract != t.Abstract {
+		nMsg.Abstract = t.Abstract
+	}
+	if msg.DOI != t.DOI {
+		nMsg.DOI = t.DOI
+	}
+	if msg.Type != t.Type {
+		nMsg.Type = t.Type
+	}
+	if !msg.Created.IsSame(t.Created) {
+		nMsg.Created = t.Created
+	}
+	if !msg.Approved.IsSame(t.Approved) {
+		nMsg.Approved = t.Approved
+	}
+	if msg.Page != t.Page {
+		nMsg.Page = t.Page
+	}
+	if msg.UpdatePolicy != t.UpdatePolicy {
+		nMsg.UpdatePolicy = t.UpdatePolicy
+	}
+	if msg.Source != t.Source {
+		nMsg.Source = t.Source
+	}
+	if !isSameStrings(msg.Title, t.Title) {
+		nMsg.Title = t.Title
+	}
+	if msg.Prefix != t.Prefix {
+		nMsg.Prefix = t.Prefix
+	}
+	if msg.Volume != t.Volume {
+		nMsg.Volume = t.Volume
+	}
+	if !msg.ClinicalTrailNumber.IsSame(t.ClinicalTrailNumber) {
+		nMsg.ClinicalTrailNumber = t.ClinicalTrailNumber
+	}
+	if !isSamePersons(msg.Author, t.Author) {
+		nMsg.Author = t.Author
+	}
+	if msg.Member != t.Member {
+		nMsg.Member = t.Member
+	}
+	if !msg.ContentCreated.IsSame(t.ContentCreated) {
+		nMsg.ContentCreated = t.ContentCreated
+	}
+	if !msg.PublishedOnline.IsSame(t.PublishedOnline) {
+		nMsg.PublishedOnline = t.PublishedOnline
+	}
+	if !isSameReferences(msg.Reference, t.Reference) {
+		nMsg.Reference = t.Reference
+	}
+	if !isSameStrings(msg.ContainerTitle, t.ContainerTitle) {
+		nMsg.ContainerTitle = t.ContainerTitle
+	}
+	if !msg.Review.IsSame(t.Review) {
+		nMsg.Review = t.Review
+	}
+	if !isSameStrings(msg.OriginalTitle, t.OriginalTitle) {
+		nMsg.OriginalTitle = t.OriginalTitle
+	}
+	if msg.Language != t.Language {
+		nMsg.Language = t.Language
+	}
+	if !isSameLinks(msg.Link, t.Link) {
+		nMsg.Link = t.Link
+	}
+	if !msg.Deposited.IsSame(t.Deposited) {
+		nMsg.Deposited = t.Deposited
+	}
+	if msg.Score != t.Score {
+		nMsg.Score = t.Score
+	}
+	if msg.Degree != t.Degree {
+		nMsg.Degree = t.Degree
+	}
+	if !isSameStrings(msg.SubTitle, t.SubTitle) {
+		nMsg.SubTitle = t.SubTitle
+	}
+	if !isSamePersons(msg.Translator, t.Translator) {
+		nMsg.Translator = t.Translator
+	}
+	if !msg.FreeToRead.IsSame(t.FreeToRead) {
+		nMsg.FreeToRead = t.FreeToRead
+	}
+	if !isSamePersons(msg.Editor, t.Editor) {
+		nMsg.Editor = t.Editor
+	}
+	if msg.ComponentNumber != t.ComponentNumber {
+		nMsg.ComponentNumber = t.ComponentNumber
+	}
+	if !isSameStrings(msg.ShortTitle, t.ShortTitle) {
+		nMsg.ShortTitle = t.ShortTitle
+	}
+	if !msg.Issued.IsSame(t.Issued) {
+		nMsg.Issued = t.Issued
+	}
+	if !isSameStrings(msg.ISBN, t.ISBN) {
+		nMsg.ISBN = t.ISBN
+	}
+	if msg.ReferenceCount != t.ReferenceCount {
+		nMsg.ReferenceCount = t.ReferenceCount
+	}
+	if msg.PartNumber != t.PartNumber {
+		nMsg.PartNumber = t.PartNumber
+	}
+	if !msg.JournalIssue.IsSame(t.JournalIssue) {
+		nMsg.JournalIssue = t.JournalIssue
+	}
+	if !isSameStrings(msg.AlternativeId, t.AlternativeId) {
+		nMsg.AlternativeId = t.AlternativeId
+	}
+	if msg.URL != t.URL {
+		nMsg.URL = t.URL
+	}
+	if !isSameStrings(msg.Archive, t.Archive) {
+		nMsg.Archive = t.Archive
+	}
+	if !isSameRelations(msg.Relation, t.Relation) {
+		nMsg.Relation = t.Relation
+	}
+	if !isSameStrings(msg.ISSN, t.ISSN) {
+		nMsg.ISSN = t.ISSN
+	}
+	if !isSameIdentifiers(msg.IssnType, t.IssnType) {
+		nMsg.IssnType = t.IssnType
+	}
+	if !isSameStrings(msg.Subject, t.Subject) {
+		nMsg.Subject = t.Subject
+	}
+	if !msg.PublishedOther.IsSame(t.PublishedOther) {
+		nMsg.PublishedOther = t.PublishedOther
+	}
+	if !msg.Published.IsSame(t.Published) {
+		nMsg.Published = t.Published
+	}
+	if !isSameAssertions(msg.Assertion, t.Assertion) {
+		nMsg.Assertion = t.Assertion
+	}
+	return nMsg
+}
+
+// Diff takes the current Message, a new version of the Message
+// and two Message objects one holding the old values and another
+// holding the new values.
+func (msg *Message) Diff(t *Message) (*Message, *Message) {
+	if msg == nil && t == nil {
+		return nil, nil
+	}
+	if msg == nil && t != nil {
+		return nil, t
+	}
+	if msg != nil && t == nil {
+		return msg, nil
+	}
+	// Aggregate the changed fields
+	oMsg := new(Message)
+	nMsg := new(Message)
+	if !msg.Institution.IsSame(t.Institution) {
+		oMsg.Institution = msg.Institution
+		nMsg.Institution = t.Institution
+	}
+	if !msg.Indexed.IsSame(t.Indexed) {
+		oMsg.Indexed = msg.Indexed
+		nMsg.Indexed = t.Indexed
+	}
+	if !msg.Posted.IsSame(t.Posted) {
+		oMsg.Posted = msg.Posted
+		nMsg.Posted = t.Posted
+	}
+	if msg.PublisherLocation != t.PublisherLocation {
+		oMsg.PublisherLocation = msg.PublisherLocation
+		nMsg.PublisherLocation = t.PublisherLocation
+	}
+	if !isSameUpdatedTo(msg.UpdateTo, t.UpdateTo) {
+		oMsg.UpdateTo = msg.UpdateTo
+		nMsg.UpdateTo = t.UpdateTo
+	}
+	if !isSameOrganizations(msg.StandardsBody, t.StandardsBody) {
+		oMsg.StandardsBody = msg.StandardsBody
+		nMsg.StandardsBody = t.StandardsBody
+	}
+	if msg.EditionNumber != t.EditionNumber {
+		oMsg.EditionNumber = msg.EditionNumber
+		nMsg.EditionNumber = t.EditionNumber
+	}
+	if !isSameStrings(msg.GroupTitle, t.GroupTitle) {
+		oMsg.GroupTitle = msg.GroupTitle
+		nMsg.GroupTitle = t.GroupTitle
+	}
+	if msg.Publisher != t.Publisher {
+		oMsg.Publisher = msg.Publisher
+		nMsg.Publisher = t.Publisher
+	}
+	if msg.Issue != t.Issue {
+		oMsg.Issue = msg.Issue
+		nMsg.Issue = t.Issue
+	}
+	if !isSameIdentifiers(msg.IsbnType, t.IsbnType) {
+		oMsg.IsbnType = msg.IsbnType
+		nMsg.IsbnType = t.IsbnType
+	}
+	if !isSameLicenses(msg.License, t.License) {
+		oMsg.License = msg.License
+		nMsg.License = t.License
+	}
+	if !isSameFunders(msg.Funder, t.Funder) {
+		oMsg.Funder = msg.Funder
+		nMsg.Funder = t.Funder
+	}
+	if !msg.ContentDomain.IsSame(t.ContentDomain) {
+		oMsg.ContentDomain = msg.ContentDomain
+		nMsg.ContentDomain = t.ContentDomain
+	}
+	if !isSamePersons(msg.Chair, t.Chair) {
+		oMsg.Chair = msg.Chair
+		nMsg.Chair = t.Chair
+	}
+	if !isSameStrings(msg.ShortContainerTitle, t.ShortContainerTitle) {
+		oMsg.ShortContainerTitle = msg.ShortContainerTitle
+		nMsg.ShortContainerTitle = t.ShortContainerTitle
+	}
+	if !msg.Accepted.IsSame(t.Accepted) {
+		oMsg.Accepted = msg.Accepted
+		nMsg.Accepted = t.Accepted
+	}
+	if !msg.ContentUpdated.IsSame(t.ContentUpdated) {
+		oMsg.ContentUpdated = msg.ContentUpdated
+		nMsg.ContentUpdated = t.ContentUpdated
+	}
+	if !msg.PublishedPrint.IsSame(t.PublishedPrint) {
+		oMsg.PublishedPrint = msg.PublishedPrint
+		nMsg.PublishedPrint = t.PublishedPrint
+	}
+	if msg.Abstract != t.Abstract {
+		oMsg.Abstract = msg.Abstract
+		nMsg.Abstract = t.Abstract
+	}
+	if msg.DOI != t.DOI {
+		oMsg.DOI = msg.DOI
+		nMsg.DOI = t.DOI
+	}
+	if msg.Type != t.Type {
+		oMsg.Type = msg.Type
+		nMsg.Type = t.Type
+	}
+	if !msg.Created.IsSame(t.Created) {
+		oMsg.Created = msg.Created
+		nMsg.Created = t.Created
+	}
+	if !msg.Approved.IsSame(t.Approved) {
+		oMsg.Approved = msg.Approved
+		nMsg.Approved = t.Approved
+	}
+	if msg.Page != t.Page {
+		oMsg.Page = msg.Page
+		nMsg.Page = t.Page
+	}
+	if msg.UpdatePolicy != t.UpdatePolicy {
+		oMsg.UpdatePolicy = msg.UpdatePolicy
+		nMsg.UpdatePolicy = t.UpdatePolicy
+	}
+	if msg.Source != t.Source {
+		oMsg.Source = msg.Source
+		nMsg.Source = t.Source
+	}
+	if !isSameStrings(msg.Title, t.Title) {
+		oMsg.Title = msg.Title
+		nMsg.Title = t.Title
+	}
+	if msg.Prefix != t.Prefix {
+		oMsg.Prefix = msg.Prefix
+		nMsg.Prefix = t.Prefix
+	}
+	if msg.Volume != t.Volume {
+		oMsg.Volume = msg.Volume
+		nMsg.Volume = t.Volume
+	}
+	if !msg.ClinicalTrailNumber.IsSame(t.ClinicalTrailNumber) {
+		oMsg.ClinicalTrailNumber = msg.ClinicalTrailNumber
+		nMsg.ClinicalTrailNumber = t.ClinicalTrailNumber
+	}
+	if !isSamePersons(msg.Author, t.Author) {
+		oMsg.Author = msg.Author
+		nMsg.Author = t.Author
+	}
+	if msg.Member != t.Member {
+		oMsg.Member = msg.Member
+		nMsg.Member = t.Member
+	}
+	if !msg.ContentCreated.IsSame(t.ContentCreated) {
+		oMsg.ContentCreated = msg.ContentCreated
+		nMsg.ContentCreated = t.ContentCreated
+	}
+	if !msg.PublishedOnline.IsSame(t.PublishedOnline) {
+		oMsg.PublishedOnline = msg.PublishedOnline
+		nMsg.PublishedOnline = t.PublishedOnline
+	}
+	if !isSameReferences(msg.Reference, t.Reference) {
+		oMsg.Reference = msg.Reference
+		nMsg.Reference = t.Reference
+	}
+	if !isSameStrings(msg.ContainerTitle, t.ContainerTitle) {
+		oMsg.ContainerTitle = msg.ContainerTitle
+		nMsg.ContainerTitle = t.ContainerTitle
+	}
+	if !msg.Review.IsSame(t.Review) {
+		oMsg.Review = msg.Review
+		nMsg.Review = t.Review
+	}
+	if !isSameStrings(msg.OriginalTitle, t.OriginalTitle) {
+		oMsg.OriginalTitle = msg.OriginalTitle
+		nMsg.OriginalTitle = t.OriginalTitle
+	}
+	if msg.Language != t.Language {
+		oMsg.Language = msg.Language
+		nMsg.Language = t.Language
+	}
+	if !isSameLinks(msg.Link, t.Link) {
+		oMsg.Link = msg.Link
+		nMsg.Link = t.Link
+	}
+	if !msg.Deposited.IsSame(t.Deposited) {
+		oMsg.Deposited = msg.Deposited
+		nMsg.Deposited = t.Deposited
+	}
+	if msg.Score != t.Score {
+		oMsg.Score = msg.Score
+		nMsg.Score = t.Score
+	}
+	if msg.Degree != t.Degree {
+		oMsg.Degree = msg.Degree
+		nMsg.Degree = t.Degree
+	}
+	if !isSameStrings(msg.SubTitle, t.SubTitle) {
+		oMsg.SubTitle = msg.SubTitle
+		nMsg.SubTitle = t.SubTitle
+	}
+	if !isSamePersons(msg.Translator, t.Translator) {
+		oMsg.Translator = msg.Translator
+		nMsg.Translator = t.Translator
+	}
+	if !msg.FreeToRead.IsSame(t.FreeToRead) {
+		oMsg.FreeToRead = msg.FreeToRead
+		nMsg.FreeToRead = t.FreeToRead
+	}
+	if !isSamePersons(msg.Editor, t.Editor) {
+		oMsg.Editor = msg.Editor
+		nMsg.Editor = t.Editor
+	}
+	if msg.ComponentNumber != t.ComponentNumber {
+		oMsg.ComponentNumber = msg.ComponentNumber
+		nMsg.ComponentNumber = t.ComponentNumber
+	}
+	if !isSameStrings(msg.ShortTitle, t.ShortTitle) {
+		oMsg.ShortTitle = msg.ShortTitle
+		nMsg.ShortTitle = t.ShortTitle
+	}
+	if !msg.Issued.IsSame(t.Issued) {
+		oMsg.Issued = msg.Issued
+		nMsg.Issued = t.Issued
+	}
+	if !isSameStrings(msg.ISBN, t.ISBN) {
+		oMsg.ISBN = msg.ISBN
+		nMsg.ISBN = t.ISBN
+	}
+	if msg.ReferenceCount != t.ReferenceCount {
+		oMsg.ReferenceCount = msg.ReferenceCount
+		nMsg.ReferenceCount = t.ReferenceCount
+	}
+	if msg.PartNumber != t.PartNumber {
+		oMsg.PartNumber = msg.PartNumber
+		nMsg.PartNumber = t.PartNumber
+	}
+	if !msg.JournalIssue.IsSame(t.JournalIssue) {
+		oMsg.JournalIssue = msg.JournalIssue
+		nMsg.JournalIssue = t.JournalIssue
+	}
+	if !isSameStrings(msg.AlternativeId, t.AlternativeId) {
+		oMsg.AlternativeId = msg.AlternativeId
+		nMsg.AlternativeId = t.AlternativeId
+	}
+	if msg.URL != t.URL {
+		oMsg.URL = msg.URL
+		nMsg.URL = t.URL
+	}
+	if !isSameStrings(msg.Archive, t.Archive) {
+		oMsg.Archive = msg.Archive
+		nMsg.Archive = t.Archive
+	}
+	if !isSameRelations(msg.Relation, t.Relation) {
+		oMsg.Relation = msg.Relation
+		nMsg.Relation = t.Relation
+	}
+	if !isSameStrings(msg.ISSN, t.ISSN) {
+		oMsg.ISSN = msg.ISSN
+		nMsg.ISSN = t.ISSN
+	}
+	if !isSameIdentifiers(msg.IssnType, t.IssnType) {
+		oMsg.IssnType = msg.IssnType
+		nMsg.IssnType = t.IssnType
+	}
+	if !isSameStrings(msg.Subject, t.Subject) {
+		oMsg.Subject = msg.Subject
+		nMsg.Subject = t.Subject
+	}
+	if !msg.PublishedOther.IsSame(t.PublishedOther) {
+		oMsg.PublishedOther = msg.PublishedOther
+		nMsg.PublishedOther = t.PublishedOther
+	}
+	if !msg.Published.IsSame(t.Published) {
+		oMsg.Published = msg.Published
+		nMsg.Published = t.Published
+	}
+	if !isSameAssertions(msg.Assertion, t.Assertion) {
+		oMsg.Assertion = msg.Assertion
+		nMsg.Assertion = t.Assertion
+	}
+	return oMsg, nMsg
+}
+
+// DiffAsJSON performs a Diff and returns the results as a JSON array
+// where the first element (index 0) is the old object's values and
+// the second (index 1) is the updated values
+func (msg *Message) DiffAsJSON(t *Message) ([]byte, error) {
+	o, n := msg.Diff(t)
+	return json.MarshalIndent([]*Message{o, n}, "", "    ")
+}
+
 // IsSame checks if two works object have the same content.
-// NOTE: if both are nil then true is returned. Only works 
-// the type and message attributes are compared.
+// NOTE: if both are nil then true is returned. Only compares
+// the works' type and message attributes are compared.
 func (work *Works) IsSame(t *Works) bool {
 	if work == nil && t == nil {
 		return true
@@ -935,8 +1445,49 @@ func (work *Works) IsSame(t *Works) bool {
 	if work == nil || t == nil {
 		return false
 	}
+	if work.MessageVersion != t.MessageVersion {
+	}
 	if work.MessageType != t.MessageType {
 		return false
 	}
 	return work.Message.IsSame(t.Message)
+}
+
+// Diff works returns the fields that differ
+func (work *Works) Diff(t *Works) (*Works, *Works) {
+	if work == nil && t == nil {
+		return nil, nil
+	}
+	if work == nil && t != nil {
+		return nil, t
+	}
+	if work != nil && t == nil {
+		return work, nil
+	}
+	oWork := new(Works)
+	nWork := new(Works)
+	if work.Status != t.Status {
+		oWork.Status = work.Status
+		nWork.Status = t.Status
+	}
+	if work.MessageVersion != t.MessageVersion {
+		oWork.MessageVersion = work.MessageVersion
+		nWork.MessageVersion = t.MessageVersion
+	}
+	if work.MessageType != t.MessageType {
+		oWork.MessageType = work.MessageType
+		nWork.MessageType = t.MessageType
+	}
+	if !work.Message.IsSame(t.Message) {
+		oWork.Message, nWork.Message = work.Message.Diff(t.Message)
+	}
+	return oWork, nWork
+}
+
+// DiffAsJSON performs a Diff and returns the results as a JSON array
+// where the first element (index 0) is the old object's values and
+// the second (index 1) is the updated values
+func (work *Works) DiffAsJSON(t *Works) ([]byte, error) {
+	o, n := work.Diff(t)
+	return json.MarshalIndent([]*Works{o, n}, "", "    ")
 }

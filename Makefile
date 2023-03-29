@@ -13,7 +13,7 @@ PROJECT_LIST = crossrefapi
 
 OS = $(shell uname)
 
-EXT = 
+EXT =
 ifeq ($(OS), Windows)
 	EXT = .exe
 endif
@@ -39,7 +39,7 @@ bin/crossrefapi$(EXT): crossrefapi.go cmd/crossrefapi/crossrefapi.go
 	go build -o bin/crossrefapi$(EXT) cmd/crossrefapi/crossrefapi.go
 
 
-install: 
+install:
 	env GOBIN=$(GOPATH)/bin go install cmd/crossrefapi/crossrefapi.go
 
 website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css about.md
@@ -69,11 +69,11 @@ lint:
 	golint crossrefapi_test.go
 	golint cmd/crossrefapi/crossrefapi.go
 
-clean: 
+clean:
 	if [ -f index.html ]; then rm *.html; fi
 	if [ -d bin ]; then rm -fR bin; fi
 	if [ -d dist ]; then rm -fR dist; fi
-	if [ -d testdata ]; then rm -fR testdata; fi
+	if [ -d testout ]; then rm -fR testout; fi
 	if [ -d man ]; then rm -fR man; fi
 
 man: build
