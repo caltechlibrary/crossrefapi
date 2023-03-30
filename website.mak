@@ -15,6 +15,7 @@ $(HTML_PAGES): $(MD_PAGES) index.html .FORCE
 	    --lua-filter=links-to-html.lua \
 	    --template=page.tmpl
 	git add $(basename $@).html
+	if [ "$@" = "README.html" ]; then cp README.html index.html; git add index.html; fi
 
 index.html: README.html .FORCE
 	cp README.html index.html
