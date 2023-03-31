@@ -81,6 +81,7 @@ type Message struct {
 	ReferenceCount      int                  `json:"reference-count,omitempty"`
 	PartNumber          string               `json:"part-number,omitempty"`
 	JournalIssue        *JournalIssue        `json:"journal-issue,omitempty"`
+	ArticleNumber       string               `json:"article-number,omitempty'`
 	AlternativeId       []string             `json:"alternative-id,omitempty"`
 	URL                 string               `json:"URL,omitempty"`
 	Archive             []string             `json:"archive,omitempty"`

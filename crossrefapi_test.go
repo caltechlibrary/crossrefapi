@@ -89,7 +89,7 @@ func TestClient(t *testing.T) {
 
 	// Now test Works
 	doi := "10.1037/0003-066x.59.1.29"                        //"10.1000/xyz123"
-	doi_url := "https://dx.doi.org/10.1037/0003-066x.59.1.29" // "https://dx.doi.org/10.1000/xyz123"
+	doiURL := "https://dx.doi.org/10.1037/0003-066x.59.1.29" // "https://dx.doi.org/10.1000/xyz123"
 
 	src, err = api.WorksJSON(doi)
 	if err != nil {
@@ -111,7 +111,7 @@ func TestClient(t *testing.T) {
 			t.Errorf("expected unmarshaled object, got nil")
 			t.FailNow()
 		}
-		obj2, err = api.Works(doi_url)
+		obj2, err = api.Works(doiURL)
 		if obj2 == nil {
 			t.Errorf("expected an non-nil Object from Types(), got nil but no error")
 			t.FailNow()
@@ -131,7 +131,7 @@ func TestClient(t *testing.T) {
 		t.Errorf("expected unmarshaled object, got nil")
 		t.FailNow()
 	}
-	work2, err := api.Works(doi_url)
+	work2, err := api.Works(doiURL)
 	if work2 == nil {
 		t.Errorf("expected an non-nil Object from Types(), got nil but no error")
 		t.FailNow()
@@ -145,6 +145,25 @@ func TestClient(t *testing.T) {
 		t.Errorf("expected work 1 & 2 don't match\n%s", src)
 		t.FailNow()
 	}
+
+
+	// This DOI has an article number, 032435
+	doiURL = "https://doi.org/10.1103/PhysRevA.105.032435"
+	works3, err := api.Works(doiURL)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	if works3.Message == nil {
+		t.Errorf("Expected a message attribute, got %+v\n", works3)
+		t.FailNow()
+	}
+	if works3.Message.ArticleNumber != "032435" {
+		t.Errorf("Expected article number 032435, got %q", works3.Message.ArticleNumber)
+		t.FailNow()
+	}
+
+
 }
 
 func TestMain(m *testing.M) {
@@ -153,3 +172,5 @@ func TestMain(m *testing.M) {
 	log.Printf("mailto: %q", MailTo)
 	os.Exit(m.Run())
 }
+
+
