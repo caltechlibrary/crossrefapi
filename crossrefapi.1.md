@@ -1,7 +1,7 @@
 ---
-title: "crossrefapi(1) user manual | version 1.0.3"
+title: "crossrefapi(1) user manual | version 1.0.3 3f5760f"
 author: "R. S. Doiel"
-pubDate: 2023-03-29
+pubDate: 2023-06-06
 ---
 
 # NAME
@@ -19,7 +19,9 @@ has the ability to compare the current "works" document with a JSON document
 retrieved previously. The program uses the CrossRef REST API.
 It follows the etiquette suggested at
 
-    https://github.com/CrossRef/rest-api-doc#etiquette
+~~~
+	http://api.crossref.org/swagger-ui/index.html
+~~~
 
 # OPTIONS
 

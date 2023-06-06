@@ -3,15 +3,23 @@ Installation
 ============
 
 *crossrefapi* is a command line program run from a shell like Bash. It allows you to retrieve JSON works and types object from the CrossRefAPI in a
-[polite](https://github.com/CrossRef/rest-api-doc#etiquette) manner.
+[polite](https://api.crossref.org/swagger-ui/index.html "look under the heading Etiquette") manner.
 
-This is generalized instructions for a release.  For deployment suggestions see NOTES.md
+Quick install with curl
+-----------------------
+
+If you are running macOS or Linux you can install released versions of newt
+with the following curl command.
+
+~~~
+curl https://caltechlibrary.github.io/crossrefapi/installer.sh
+~~~
 
 Compiled version
 ----------------
 
-Compiled versions are available for Mac OS X (amd64 and M1 processor, macos-amd64, macos-arm64), Linux (amd64 process, linux-amd64), 
-Windows (amd64 processor, windows-amd64) and Rapsberry Pi (arm7 processor, raspbian-arm7)
+Compiled versions are available for macOS (Intel and M1 processor, macOS-x86_64, macOS-arm64), Linux (Intel process, Linux-x86_64), 
+Windows (Intel processor, Windows-x86_64) and Rapsberry Pi (arm7 processor, RaspberryPiOS-arm7)
 
 VERSION_NUMBER is a [symantic version number](http://semver.org/) (e.g. v0.1.2)
 
@@ -21,20 +29,21 @@ For all the released version go to the project page on Github and click latest r
 >    https://github.com/caltechlibrary/crossrefapi/releases/latest
 
 
-| Platform    | Zip Filename                             |
-|-------------|------------------------------------------|
-| Windows     | crossrefapi-VERSION_NUMBER-windows-amd64.zip |
-| Mac OS X    | crossrefapi-VERSION_NUMBER-macos-amd64.zip  |
-| Mac OS X    | crossrefapi-VERSION_NUMBER-macos-arm64.zip  |
-| Linux/Intel | crossrefapi-VERSION_NUMBER-linux-amd64.zip   |
-| Raspbery Pi | crossrefapi-VERSION_NUMBER-raspbian-arm7.zip |
+| Platform      | Zip Filename                             |
+|---------------|------------------------------------------|
+| Windows       | crossrefapi-VERSION_NUMBER-Windows-x86_64.zip |
+| macOS (Intel) | crossrefapi-VERSION_NUMBER-macOS-x86_64.zip  |
+| macOS (M1,M2) | crossrefapi-VERSION_NUMBER-macOS-arm64.zip  |
+| Linux (Intel) | crossrefapi-VERSION_NUMBER-Linux-x86_64.zip   |
+| Linux (ARM64) | crossrefapi-VERSION_NUMBER-Linux-aarch64.zip   |
+| Raspbery Pi OS (64) | crossrefapi-VERSION_NUMBER-RaspberryPiOS-arm7.zip |
 
 
 The basic recipe
 ----------------
 
 + Find the Zip file listed matching the architecture you're running and download it
-    + (e.g. if you're on a Windows 10 laptop/Surface with a amd64 style CPU you'd choose the Zip file with "windows-amd64" in the name).
+    + (e.g. if you're on a Windows 10 laptop/Surface with a Intel style CPU you'd choose the Zip file with "Windows-x86_64" in the name).
 + Download the zip file and unzip the file.
 + Copy the contents of the folder named "bin" to a folder that is in your path 
     + (e.g. "$HOME/bin" is common).
@@ -43,7 +52,7 @@ The basic recipe
 + Test
 
 
-### Mac OS X
+### macOS
 
 1. Download the zip file
 2. Unzip the zip file
@@ -56,7 +65,7 @@ zip file.
 
 ```shell
     cd Downloads/
-    unzip crossrefapi-*-macos-amd64.zip
+    unzip crossrefapi-*-macOS-x86_64.zip
     mkdir -p $HOME/bin
     cp -v bin/* $HOME/bin/
     export PATH=$HOME/bin:$PATH
@@ -75,7 +84,7 @@ downloading the zip file.
 
 ```shell
     cd Downloads/
-    unzip crossrefapi-*-windows-amd64.zip
+    unzip crossrefapi-*-Windows-x86_64.zip
     mkdir -p $HOME/bin
     cp -v bin/* $HOME/bin/
     export PATH=$HOME/bin:$PATH
@@ -95,7 +104,7 @@ downloading the zip file.
 
 ```shell
     cd Downloads/
-    unzip crossrefapi-*-linux-amd64.zip
+    unzip crossrefapi-*-Linux-x86_64.zip
     mkdir -p $HOME/bin
     cp -v bin/* $HOME/bin/
     export PATH=$HOME/bin:$PATH
@@ -117,7 +126,7 @@ downloading the zip file.
 
 ```shell
     cd Downloads/
-    unzip crossrefapi-*-raspbian-arm7.zip
+    unzip crossrefapi-*-RaspberryPiOS-arm7.zip
     mkdir -p $HOME/bin
     cp -v bin/* $HOME/bin/
     export PATH=$HOME/bin:$PATH

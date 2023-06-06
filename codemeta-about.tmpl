@@ -38,23 +38,21 @@ ${for(contributor)}
 ${endfor}
 ${endif}
 
+${if(maintainer)}
+### Maintainers
+
+${for(maintainer)}
+- ${it.givenName} ${it.familyName}
+${endfor}
+${endif}
+
 ${if(description)}
 ${description}
 ${endif}
 
-${if(keywords)}
-### Keywords
-
-${for(keywords)}
-- ${it}
-${endfor}
-${endif}
-
-### Software
-
-${if(license)}- License: [${license}](${license} "link to license")${endif}
-${if(codeRepository)}- GitHub: [${codeRepository}](${codeRepository} "link to GitHub")${endif}
-${if(issueTracker)}- Issues: [${issueTracker}](${issueTracker} "link to GitHub issues")${endif}
+${if(license)}- License: <${license}>${endif}
+${if(codeRepository)}- GitHub: <${codeRepository}>${endif}
+${if(issueTracker)}- Issues: <${issueTracker}>${endif}
 
 
 ${if(programmingLanguage)}

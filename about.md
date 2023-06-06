@@ -27,20 +27,16 @@ About this software
 - Robert Doiel
 
 
+### Maintainers
+
+- Robert Doiel
+
 A Golang package and command line tool for working with the public
 CrossRef API
 
-### Keywords
-
-- CrossRef
-- DOI
-- metadata
-
-### Software
-
-- License: [https://caltechlibrary/crossrefapi/LICENSE](https://caltechlibrary/crossrefapi/LICENSE "link to license")
-- GitHub: [https://github.com/caltechlibrary/crossrefapi](https://github.com/caltechlibrary/crossrefapi "link to GitHub")
-- Issues: [https://github.com/caltechlibrary/crossrefapi/issues](https://github.com/caltechlibrary/crossrefapi/issues "link to GitHub issues")
+- License: <https://caltechlibrary/crossrefapi/LICENSE>
+- GitHub: <https://github.com/caltechlibrary/crossrefapi>
+- Issues: <https://github.com/caltechlibrary/crossrefapi/issues>
 
 
 ### Programming languages

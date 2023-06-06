@@ -31,9 +31,9 @@ import (
 
 var (
 	helpText = `---
-title: "{app_name}(1) user manual | version {version}"
+title: "{app_name}(1) user manual | version {version} {release_hash}"
 author: "R. S. Doiel"
-pubDate: 2023-03-29
+pubDate: {release_date}
 ---
 
 # NAME
@@ -51,7 +51,9 @@ has the ability to compare the current "works" document with a JSON document
 retrieved previously. The program uses the CrossRef REST API.
 It follows the etiquette suggested at
 
-    https://github.com/CrossRef/rest-api-doc#etiquette
+~~~
+	http://api.crossref.org/swagger-ui/index.html
+~~~
 
 # OPTIONS
 
@@ -105,10 +107,6 @@ crossrefapi -mailto="jdoe@example.edu" -diff works.json \
 	mailto    string
 )
 
-func fmtTxt(src string, appName string, version string) string {
-	return strings.ReplaceAll(strings.ReplaceAll(src, "{app_name}", appName), "{version}", version)
-}
-
 func pop(args []string) (string, []string) {
 	var (
 		arg string
@@ -130,6 +128,12 @@ func pop(args []string) (string, []string) {
 
 func main() {
 	appName := path.Base(os.Args[0])
+	// NOTE: This is the date that version.go was generated.
+	version := crossrefapi.Version
+    releaseDate := crossrefapi.ReleaseDate
+    releaseHash := crossrefapi.ReleaseHash
+    fmtHelp := crossrefapi.FmtHelp
+
 	flagSet := flag.NewFlagSet(appName, flag.ContinueOnError)
 
 	// Standard Options
@@ -145,22 +149,22 @@ func main() {
 	args := flagSet.Args()
 
 	if showHelp {
-		fmt.Fprint(os.Stdout, fmtTxt(helpText, appName, crossrefapi.Version))
+		fmt.Fprint(os.Stdout, fmtHelp(helpText, appName, version, releaseDate, releaseHash))
 		os.Exit(0)
 	}
 
 	if showLicense {
-		fmt.Fprintf(os.Stdout, "%s %s\n\n%s\n", appName, crossrefapi.Version, crossrefapi.LicenseText)
+		fmt.Fprintf(os.Stdout, "%s\n", crossrefapi.LicenseText)
 		os.Exit(0)
 	}
 
 	if showVersion {
-		fmt.Fprintf(os.Stdout, "%s %s\n", appName, crossrefapi.Version)
+		fmt.Fprintf(os.Stdout, "%s %s %s\n", appName, version, releaseHash)
 		os.Exit(0)
 	}
 
 	if len(args) < 1 {
-		fmt.Fprint(os.Stderr, fmtTxt(helpText, appName, crossrefapi.Version))
+		fmt.Fprint(os.Stderr, fmtHelp(helpText, appName, version, releaseDate, releaseHash))
 		os.Exit(1)
 	}
 
