@@ -11,7 +11,7 @@ authors:
     orcid: "https://orcid.org/0000-0003-0900-6903"
 
 repository-code: "https://github.com/caltechlibrary/crossrefapi"
-version: 1.0.3
+version: 1.0.4
 license-url: "https://caltechlibrary/crossrefapi/LICENSE"
 keywords: [ "CrossRef", "DOI", "metadata" ]
 
@@ -20,7 +20,7 @@ keywords: [ "CrossRef", "DOI", "metadata" ]
 About this software
 ===================
 
-## crossrefapi 1.0.3
+## crossrefapi 1.0.4
 
 ### Authors
 
