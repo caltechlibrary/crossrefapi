@@ -87,6 +87,29 @@ func TestClient(t *testing.T) {
 		t.FailNow()
 	}
 
+	// Confirm these valid doi can be retrieved and unpacked.
+	doiList := []string{
+		"10.1037/0003-066x.59.1.29",
+		"10.7554/elife.81398",
+	}
+	for i, doi := range doiList {
+		src, err = api.WorksJSON(doi)
+		if err != nil {
+			t.Errorf("expected a JSON response (%d, %q), got %s", i, doi, err)
+			continue
+		}
+		if api.StatusCode != 200 {
+			t.Errorf("expected status code 200 (%d, %q), got %d -> %q", i, doi, api.StatusCode, api.Status)
+		}
+		// Make sure we can unmashal this
+		w := new(Works)
+		err = json.Unmarshal(src, &w)
+		if err != nil {
+			t.Errorf("failed to unmarshal (%d, %q) -> %s", i, doi, err)
+			t.FailNow()
+		}
+	}
+
 	// Now test Works
 	doi := "10.1037/0003-066x.59.1.29"                        //"10.1000/xyz123"
 	doiURL := "https://dx.doi.org/10.1037/0003-066x.59.1.29" // "https://dx.doi.org/10.1000/xyz123"
@@ -100,27 +123,7 @@ func TestClient(t *testing.T) {
 		t.Errorf("expected status code 200, got %d -> %q", api.StatusCode, api.Status)
 		t.FailNow()
 	}
-	/*
-		obj1 = nil
-		err = json.Unmarshal(src, &obj1)
-		if err != nil {
-			t.Error(err)
-			t.FailNow()
-		}
-		if obj1 == nil {
-			t.Errorf("expected unmarshaled object, got nil")
-			t.FailNow()
-		}
-		obj2, err = api.Works(doiURL)
-		if obj2 == nil {
-			t.Errorf("expected an non-nil Object from Types(), got nil but no error")
-			t.FailNow()
-		}
-		if len(obj1) != len(obj2) {
-			t.Errorf("expected equal lengths for obj1, obj2 ->\n%+v, \n%+v", obj1, obj2)
-			t.FailNow()
-		}
-	*/
+
 	work1 := new(Works)
 	err = json.Unmarshal(src, &work1)
 	if err != nil {
@@ -160,6 +163,8 @@ func TestClient(t *testing.T) {
 	}
 	if works3.Message.ArticleNumber != "032435" {
 		t.Errorf("Expected article number 032435, got %q", works3.Message.ArticleNumber)
+		src, _ := json.MarshalIndent(works3.Message, "", "    ") // DEBUG
+		fmt.Fprintf(os.Stderr, "DEBUG works\n%s\n", src) // DEBUG
 		t.FailNow()
 	}
 

@@ -2,6 +2,7 @@ package crossrefapi
 
 import (
 	"encoding/json"
+	"sort"
 )
 
 // Works is a representation retrieved the CrossRef REST API using
@@ -81,11 +82,11 @@ type Message struct {
 	ReferenceCount      int                  `json:"reference-count,omitempty"`
 	PartNumber          string               `json:"part-number,omitempty"`
 	JournalIssue        *JournalIssue        `json:"journal-issue,omitempty"`
-	ArticleNumber       string               `json:"article-number,omitempty'`
+	ArticleNumber       string               `json:"article-number,omitempty"`
 	AlternativeId       []string             `json:"alternative-id,omitempty"`
 	URL                 string               `json:"URL,omitempty"`
 	Archive             []string             `json:"archive,omitempty"`
-	Relation            map[string]*Property `json:"relation,omitempty"`
+	Relation            map[string][]*Property `json:"relation,omitempty"`
 	ISSN                []string             `json:"issn,omitempty"`
 	IssnType            []*Identifier        `json:"issn-type,omitempty"`
 	Subject             []string             `json:"subject,omitempty"`
@@ -614,14 +615,41 @@ func (p *Property) IsSame(t *Property) bool {
 	return (p.AssertedBy == t.AssertedBy)
 }
 
-func isSameRelations(r1 map[string]*Property, r2 map[string]*Property) bool {
+func isSameRelations(r1 map[string][]*Property, r2 map[string][]*Property) bool {
 	if len(r1) != len(r2) {
 		return false
 	}
-	for key, property := range r1 {
-		if prop2, ok := r2[key]; ok {
-			if !property.IsSame(prop2) {
-				return false
+	r1Keys := []string{}
+	for key := range r1 {
+		r1Keys = append(r1Keys, key)
+	}
+	r2Keys := []string{}
+	for key := range r2 {
+		r2Keys = append(r2Keys, key)
+	}
+	if len(r1Keys) != len(r2Keys) {
+		return false
+	}
+	sort.Strings(r1Keys)
+	
+	for _, key := range r1Keys {
+		if propList1, ok := r1[key]; ok {
+			if propList2, ok := r2[key]; ok {
+				if len(propList1) != len(propList2) {
+					return false
+				}
+				for _, prop1 := range propList1 {
+					foundIt :=  false
+					for _, prop2 := range propList2 {
+						if prop1.IsSame(prop2) {
+							foundIt = true
+							break
+						}
+					}
+					if !foundIt {
+						return false
+					}
+				}
 			}
 		} else {
 			return false
