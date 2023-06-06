@@ -3,6 +3,7 @@ package crossrefapi
 import (
 	"encoding/json"
 	"sort"
+	"strings"
 )
 
 // Works is a representation retrieved the CrossRef REST API using
@@ -22,7 +23,7 @@ type Works struct {
 
 type Message struct {
 	// Institutional information
-	Institution *Organization `json:"institution,omitempty"`
+	Institution []*Organization `json:"institution,omitempty"`
 	// Indexed described when the work was last indexed
 	Indexed *DateObject `json:"indexed,omitempty"`
 	// Posted is when the work was posted to the API??
@@ -34,7 +35,7 @@ type Message struct {
 	// StandardsBody, ???
 	StandardsBody       []*Organization      `json:"standards-body,omitempty"`
 	EditionNumber       string               `json:"edition-number,omitempty"`
-	GroupTitle          []string             `json:"group-title,omitempty"`
+	GroupTitle          string             `json:"group-title,omitempty"`
 	Publisher           string               `json:"publisher,omitempty"`
 	Issue               string               `json:"issue,omitempty"`
 	IsbnType            []*Identifier        `json:"isbn-type,omitempty"`
@@ -778,7 +779,7 @@ func (msg *Message) IsSame(t *Message) bool {
 	if msg == nil || t == nil {
 		return false
 	}
-	if !msg.Institution.IsSame(t.Institution) {
+	if !isSameOrganizations(msg.Institution, t.Institution) {
 		return false
 	}
 	if !msg.Indexed.IsSame(t.Indexed) {
@@ -799,7 +800,7 @@ func (msg *Message) IsSame(t *Message) bool {
 	if msg.EditionNumber != t.EditionNumber {
 		return false
 	}
-	if !isSameStrings(msg.GroupTitle, t.GroupTitle) {
+	if strings.Compare(msg.GroupTitle, t.GroupTitle) != 0 {
 		return false
 	}
 	if msg.Publisher != t.Publisher {
@@ -985,7 +986,7 @@ func (msg *Message) Changes(t *Message) *Message {
 	}
 	// Aggregate the changed fields
 	nMsg := new(Message)
-	if !msg.Institution.IsSame(t.Institution) {
+	if !isSameOrganizations(msg.Institution, t.Institution) {
 		nMsg.Institution = t.Institution
 	}
 	if !msg.Indexed.IsSame(t.Indexed) {
@@ -1006,7 +1007,7 @@ func (msg *Message) Changes(t *Message) *Message {
 	if msg.EditionNumber != t.EditionNumber {
 		nMsg.EditionNumber = t.EditionNumber
 	}
-	if !isSameStrings(msg.GroupTitle, t.GroupTitle) {
+	if strings.Compare(msg.GroupTitle, t.GroupTitle) != 0{
 		nMsg.GroupTitle = t.GroupTitle
 	}
 	if msg.Publisher != t.Publisher {
@@ -1199,7 +1200,7 @@ func (msg *Message) Diff(t *Message) (*Message, *Message) {
 	// Aggregate the changed fields
 	oMsg := new(Message)
 	nMsg := new(Message)
-	if !msg.Institution.IsSame(t.Institution) {
+	if !isSameOrganizations(msg.Institution,t.Institution) {
 		oMsg.Institution = msg.Institution
 		nMsg.Institution = t.Institution
 	}
@@ -1227,7 +1228,7 @@ func (msg *Message) Diff(t *Message) (*Message, *Message) {
 		oMsg.EditionNumber = msg.EditionNumber
 		nMsg.EditionNumber = t.EditionNumber
 	}
-	if !isSameStrings(msg.GroupTitle, t.GroupTitle) {
+	if strings.Compare(msg.GroupTitle, t.GroupTitle) != 0{
 		oMsg.GroupTitle = msg.GroupTitle
 		nMsg.GroupTitle = t.GroupTitle
 	}

@@ -91,6 +91,7 @@ func TestClient(t *testing.T) {
 	doiList := []string{
 		"10.1037/0003-066x.59.1.29",
 		"10.7554/elife.81398",
+		"10.1101/564955",
 	}
 	for i, doi := range doiList {
 		src, err = api.WorksJSON(doi)
