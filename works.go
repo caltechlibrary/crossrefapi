@@ -101,6 +101,9 @@ type Identifier struct {
 	Name  string `json:"name,omitempty"`
 	Type  string `json:"type,omitempty"`
 	Value string `json:"value,omitempty"`
+	IdType string `json:"id-type,omitempty"`
+	Id     string `json:"id,omitempty"`
+	AssertedBy string `json:"asserted-by,omitempty"`
 }
 
 type Person struct {
@@ -116,6 +119,7 @@ type Person struct {
 }
 
 type Organization struct {
+	IDs        []*Identifier `json:"id,omitempty"`
 	Name       string   `json:"name,omitempty"`
 	Place      []string `json:"place,omitempty"`
 	Department []string `json:"department,omitempty"`
