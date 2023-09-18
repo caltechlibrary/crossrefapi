@@ -1,5 +1,6 @@
 package crossrefapi
 
+
 import (
 	"bytes"
 	"encoding/json"
@@ -35,7 +36,7 @@ type CrossRefClient struct {
 type Object = map[string]interface{}
 
 // Custom JSON decoder so we can treat numbers easier
-func jsonDecode(src []byte, obj interface{}) error {
+func JsonDecode(src []byte, obj interface{}) error {
 	dec := json.NewDecoder(bytes.NewReader(src))
 	dec.UseNumber()
 	err := dec.Decode(&obj)
@@ -43,6 +44,22 @@ func jsonDecode(src []byte, obj interface{}) error {
 		return err
 	}
 	return nil
+}
+
+// MarshalObject provide a custom json encoder to solve a an issue with
+// HTML entities getting converted to UTF-8 code points by json.Marshal()
+// in recent versions of go (~= go1.21).
+func MarshalObject(obj interface{}, prefix string, indent string) ([]byte, error) {
+	buf := []byte{}
+	w := bytes.NewBuffer(buf)
+	enc := json.NewEncoder(w)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent(prefix, indent)
+	err := enc.Encode(obj)
+	if err != nil {
+		return nil, err
+	}
+	return w.Bytes(), err
 }
 
 // NewCrossRefClient creates a client and makes a request
@@ -141,7 +158,7 @@ func (c *CrossRefClient) Types() (Object, error) {
 		return nil, err
 	}
 	object := make(Object)
-	err = json.Unmarshal(src, &object)
+	err = JsonDecode(src, &object)
 	if err != nil {
 		return nil, err
 	}
@@ -164,19 +181,8 @@ func (c *CrossRefClient) Works(doi string) (*Works, error) {
 		return nil, err
 	}
 	if len(src) > 0 {
-		/*
-		object := make(Object)
-		//FIXME: need to decode so I get a nice json.Number object
-		err = jsonDecode(src, &object)
-		if err != nil {
-			return nil, err
-		}
-		return object, nil
-		*/
 		work := &Works{}
-		dec := json.NewDecoder(bytes.NewReader(src))
-		dec.UseNumber()
-		err := dec.Decode(&work)
+		err = JsonDecode(src, &work)
 		if err != nil {
 			return nil, err
 		}

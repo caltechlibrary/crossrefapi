@@ -18,7 +18,6 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -192,7 +191,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "%s\n", err)
 			os.Exit(1)
 		}
-		src, err = json.MarshalIndent(obj, "", "   ")
+		src, err = crossrefapi.MarshalObject(obj, "", "     ")
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s\n", err)
 			os.Exit(1)
@@ -208,7 +207,7 @@ func main() {
 			os.Exit(1)
 		}
 		if diffFName == "" {
-			src, err = json.MarshalIndent(nWork, "", "    ")
+			src, err = crossrefapi.MarshalObject(nWork, "", "    ")
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "%s\n", err)
 				os.Exit(1)
@@ -220,7 +219,7 @@ func main() {
 				os.Exit(1)
 			}
 			oWork := new(crossrefapi.Works)
-			if err := json.Unmarshal(src, &oWork); err != nil {
+			if err := crossrefapi.JsonDecode(src, &oWork); err != nil {
 				fmt.Fprintf(os.Stderr, "%s\n", err)
 				os.Exit(1)
 			}
