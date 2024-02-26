@@ -2,12 +2,14 @@
     "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
     "@type": "SoftwareSourceCode",
     "description": "A Golang package and command line tool for working with the public CrossRef API",
+    "releaseNotes": "Updated Go version to 1.22 and doitools v0.0.2",
     "name": "crossrefapi",
     "codeRepository": "https://github.com/caltechlibrary/crossrefapi",
     "issueTracker": "https://github.com/caltechlibrary/crossrefapi/issues",
     "license": "https://caltechlibrary/crossrefapi/LICENSE",
     "dateRelease": "2023-09-18",
-    "version": "1.0.6",
+	"dateModified": "2024-02-26",
+    "version": "1.0.7",
     "author": [
         {
             "@type": "Person",
@@ -40,6 +42,6 @@
             "@id": "https://orcid.org/0000-0003-0900-6903"
         },
     "programmingLanguage": [
-        "Go"
+        "Go >= 1.22"
     ]
 }

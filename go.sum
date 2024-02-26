@@ -1,2 +1,6 @@
 github.com/caltechlibrary/doitools v0.0.0-20190910184449-c524f84bb2b3 h1:CPVAtgb3KfFDvN/LA6lk3JGT76tVC+PohQWynTkS52s=
 github.com/caltechlibrary/doitools v0.0.0-20190910184449-c524f84bb2b3/go.mod h1:dBtDM+sEd5W27XSuPTcYGUNmkO9PWJ4JMh5bW1EO8L0=
+github.com/caltechlibrary/doitools v0.0.1 h1:c6lvI5l9juo019GGUvuwbzeyv1c6VtSi8mkUv1drgwY=
+github.com/caltechlibrary/doitools v0.0.1/go.mod h1:1K36p/UIkIFM0JVaIVtFStKsFu5xjjYWMWAUExmFnP0=
+github.com/caltechlibrary/doitools v0.0.2 h1:bGFbvEo9scKlYHCAgZCrQO63GwZZDTL7siT0rVTYwmc=
+github.com/caltechlibrary/doitools v0.0.2/go.mod h1:fk83G4/el4EgvWxCwZLAeXvqzL816LdrFCHrkg7Zpp0=
