@@ -14,8 +14,9 @@ $(HTML_PAGES): $(MD_PAGES) .FORCE
 	@if [ "$(basename $@)" = "README" ]; then mv README.html index.html; git add index.html; else git add "$(basename $@).html"; fi
 
 pagefind: .FORCE
-	pagefind --verbose --exclude-selectors="nav,header,footer" --bundle-dir ./pagefind --source .
+	pagefind --verbose --exclude-selectors="nav,header,footer" --site .
 	git add pagefind
+
 
 clean:
 	@if [ -f index.html ]; then rm *.html; fi
