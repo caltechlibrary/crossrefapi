@@ -1,7 +1,7 @@
 ---
-title: "crossrefapi(1) user manual | version 1.0.7 0e0c68d"
+title: "crossrefapi(1) user manual | version 1.0.7 cd6898a"
 author: "R. S. Doiel"
-pubDate: 2024-02-26
+pubDate: 2024-07-09
 ---
 
 # NAME
