@@ -5,8 +5,8 @@ Installation
 *crossrefapi* is a command line program run from a shell like Bash. It allows you to retrieve JSON works and types object from the CrossRefAPI in a
 [polite](https://api.crossref.org/swagger-ui/index.html "look under the heading Etiquette") manner.
 
-Quick install with curl
------------------------
+Quick install with curl or irm
+------------------------------
 
 If you are running macOS or Linux you can install released versions of crossrefapi
 with the following curl command.
