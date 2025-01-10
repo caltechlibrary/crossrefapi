@@ -26,7 +26,7 @@ type CrossRefClient struct {
 	API               string `json:"api"`
 	RateLimitLimit    int    `json:"limit"`
 	RateLimitInterval int    `json:"interval"`
-	LimtCount         int    `json:"limit"`
+	LimitCount        int    `json:"limit_count"`
 	Status            string
 	StatusCode        int
 	LastRequest       time.Time `json:"last_request"`
