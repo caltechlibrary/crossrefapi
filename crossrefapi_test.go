@@ -30,7 +30,7 @@ func TestClient(t *testing.T) {
 	}
 
 	// test low level getJSON
-	src, err := api.getJSON("/types")
+	src, err := api.getJSON("/types", nil)
 	if err != nil {
 		t.Error(err)
 		t.FailNow()

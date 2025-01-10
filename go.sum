@@ -1,6 +1,7 @@
-github.com/caltechlibrary/doitools v0.0.0-20190910184449-c524f84bb2b3 h1:CPVAtgb3KfFDvN/LA6lk3JGT76tVC+PohQWynTkS52s=
-github.com/caltechlibrary/doitools v0.0.0-20190910184449-c524f84bb2b3/go.mod h1:dBtDM+sEd5W27XSuPTcYGUNmkO9PWJ4JMh5bW1EO8L0=
-github.com/caltechlibrary/doitools v0.0.1 h1:c6lvI5l9juo019GGUvuwbzeyv1c6VtSi8mkUv1drgwY=
-github.com/caltechlibrary/doitools v0.0.1/go.mod h1:1K36p/UIkIFM0JVaIVtFStKsFu5xjjYWMWAUExmFnP0=
 github.com/caltechlibrary/doitools v0.0.2 h1:bGFbvEo9scKlYHCAgZCrQO63GwZZDTL7siT0rVTYwmc=
 github.com/caltechlibrary/doitools v0.0.2/go.mod h1:fk83G4/el4EgvWxCwZLAeXvqzL816LdrFCHrkg7Zpp0=
+github.com/google/go-cmp v0.5.2 h1:X2ev0eStA3AbceY54o37/0PQ/UWqKEiiO2dKL5OPaFM=
+github.com/google/go-cmp v0.5.2/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+github.com/google/go-querystring v1.1.0 h1:AnCroh3fv4ZBgVIf1Iwtovgjaw/GiKJo8M8yD/fhyJ8=
+github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17icRSOU623lUBU=
+golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=

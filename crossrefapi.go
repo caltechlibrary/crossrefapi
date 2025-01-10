@@ -26,7 +26,7 @@ type CrossRefClient struct {
 	API               string `json:"api"`
 	RateLimitLimit    int    `json:"limit"`
 	RateLimitInterval int    `json:"interval"`
-	LimtCount         int    `json:"limit"`
+	LimitCount        int    `json:"limit_count"`
 	Status            string
 	StatusCode        int
 	LastRequest       time.Time `json:"last_request"`
@@ -83,9 +83,21 @@ func (c *CrossRefClient) calcDelay() time.Duration {
 	return time.Duration(int64(math.Ceil(float64(c.RateLimitInterval) / float64(c.RateLimitLimit))))
 }
 
+// mergeQueries merges key-value pairs from src into dst, modifying dst in-place,
+// appending values for existing keys.
+// Returns modified dst struct.
+func mergeQueries(dst *url.Values, src url.Values) *url.Values {
+	for k, vs := range src {
+		for _, v := range vs {
+			dst.Add(k, v)
+		}
+	}
+	return dst
+}
+
 // getJSON retrieves the path from the CrossRef API maintaining politeness.
 // It returns a []byte of JSON source or an error
-func (c *CrossRefClient) getJSON(p string) ([]byte, error) {
+func (c *CrossRefClient) getJSON(p string, query *url.Values) ([]byte, error) {
 	var src []byte
 
 	u, err := url.Parse(c.API)
@@ -94,6 +106,12 @@ func (c *CrossRefClient) getJSON(p string) ([]byte, error) {
 	}
 	q := u.Query()
 	q.Set("mailto", c.MailTo)
+
+	// Add additional query parameters, if provided
+	if query != nil {
+		mergeQueries(&q, *query)
+	}
+
 	u.RawQuery = q.Encode()
 	u.Path = p
 
@@ -148,7 +166,7 @@ func (c *CrossRefClient) getJSON(p string) ([]byte, error) {
 
 // TypesJSON return a list of types in JSON source
 func (c *CrossRefClient) TypesJSON() ([]byte, error) {
-	return c.getJSON("types")
+	return c.getJSON("types", nil)
 }
 
 // Types returns the list of supported types as a Object
@@ -171,7 +189,7 @@ func (c *CrossRefClient) WorksJSON(doi string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return c.getJSON(path.Join("works", s))
+	return c.getJSON(path.Join("works", s), nil)
 }
 
 // Works return the Work unmarshaled into a Object (i.e. map[string]interface{})
@@ -183,6 +201,39 @@ func (c *CrossRefClient) Works(doi string) (*Works, error) {
 	if len(src) > 0 {
 		work := &Works{}
 		err = JsonDecode(src, &work)
+		if err != nil {
+			return nil, err
+		}
+		return work, nil
+	}
+	return nil, nil
+}
+
+type WorksQueryResponse WorksResponse[WorksQueryMessage]
+type WorksQueryMessage struct {
+	ItemsPerPage int64 `json:"items-per-page"`
+	Query        struct {
+		StartIndex  int64  `json:"start-index"`
+		SearchTerms string `json:"search-terms"`
+	} `json:"query"`
+	TotalResults int64     `json:"total-results"`
+	NextCursor   string    `json:"next-cursor,omitempty"`
+	Items        []Message `json:"items,omitempty"`
+}
+
+func (c *CrossRefClient) QueryWorks(query WorksQuery) (*WorksQueryResponse, error) {
+	q, err := query.Encode()
+	if err != nil {
+		return nil, err
+	}
+	src, err := c.getJSON("works", &q)
+	if err != nil {
+		return nil, err
+	}
+	if len(src) > 0 {
+		work := &WorksQueryResponse{}
+
+		err = JsonDecode(src, work)
 		if err != nil {
 			return nil, err
 		}
