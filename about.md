@@ -33,6 +33,7 @@ About this software
 ### Maintainers
 
 - Robert Doiel
+- Thomas E Morrell
 
 A Golang package and command line tool for working with the public
 CrossRef API
