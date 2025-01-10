@@ -6,6 +6,14 @@ import (
 	"strings"
 )
 
+// WorksResponse is a generic type to represent responsed from the /works endpoint
+type WorksResponse[Message any] struct {
+	Status         string   `json:"status,omitempty"`
+	MessageType    string   `json:"message-type,omitempty"`
+	MessageVersion string   `json:"message-version,omitempty"`
+	Message        *Message `json:"message,omitempty"`
+}
+
 // Works is a representation retrieved the CrossRef REST API using
 // the Works path and a DOI. This is based on documentaiton at
 // https://api.crossref.org/swagger-ui/index.html#/Works/get_works__doi_
@@ -14,12 +22,7 @@ import (
 // NOTE: structure in documentation appears wrong, my test records
 // indicate that some things listed as array of string are really
 // just strings and visa versa.
-type Works struct {
-	Status         string   `json:"status,omitempty"`
-	MessageType    string   `json:"message-type,omitempty"`
-	MessageVersion string   `json:"message-version,omitempty"`
-	Message        *Message `json:"message,omitempty"`
-}
+type Works WorksResponse[Message]
 
 type Message struct {
 	// Institutional information
@@ -70,7 +73,7 @@ type Message struct {
 	Language            string               `json:"language,omitempty"`
 	Link                []*Link              `json:"link,omitempty"`
 	Deposited           *DateObject          `json:"deposited,omitempty"`
-	Score               int                  `json:"score,omitempty"`
+	Score               float32                `json:"score,omitempty"`
 	Degree              string               `json:"degree,omitempty"`
 	SubTitle            []string             `json:"subtitle,omitempty"`
 	Translator          []*Person            `json:"translator,omitempty"`
