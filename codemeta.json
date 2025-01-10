@@ -7,9 +7,9 @@
     "codeRepository": "https://github.com/caltechlibrary/crossrefapi",
     "issueTracker": "https://github.com/caltechlibrary/crossrefapi/issues",
     "license": "https://caltechlibrary/crossrefapi/LICENSE",
-    "dateRelease": "2023-09-18",
-	"dateModified": "2024-02-26",
-    "version": "1.0.7",
+    "dateRelease": "2025-01-10",
+	"dateModified": "2025-01-10",
+    "version": "1.0.8",
     "author": [
         {
             "@type": "Person",
@@ -41,7 +41,17 @@
             "email": "rsdoiel@caltech.edu",
             "@id": "https://orcid.org/0000-0003-0900-6903"
         },
+	"contributor": [{
+		"@type": "Person",
+		"givenName": "Louis",
+		"familyName": "Duchemmin",
+		"affiliation": {
+			"@type": "Organization",
+			"name": "Claude Bernard University"
+		},
+		"@id": "https://orcid.org/0000-0002-7984-9554"
+	}],
     "programmingLanguage": [
-        "Go >= 1.22"
+        "Go >= 1.23.4"
     ]
 }

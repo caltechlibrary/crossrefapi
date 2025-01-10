@@ -11,7 +11,7 @@ authors:
     orcid: "https://orcid.org/0000-0003-0900-6903"
 
 repository-code: "https://github.com/caltechlibrary/crossrefapi"
-version: 1.0.7
+version: 1.0.8
 license-url: "https://caltechlibrary/crossrefapi/LICENSE"
 keywords: [ "CrossRef", "DOI", "metadata" ]
 
@@ -20,12 +20,15 @@ keywords: [ "CrossRef", "DOI", "metadata" ]
 About this software
 ===================
 
-## crossrefapi 1.0.7
+## crossrefapi 1.0.8
 
 ### Authors
 
 - Robert Doiel
 
+### Contributors
+
+- Louis Duchemmin
 
 ### Maintainers
 
@@ -41,6 +44,6 @@ CrossRef API
 
 ### Programming languages
 
-- Go &gt;= 1.22
+- Go &gt;= 1.23.4
 
 
