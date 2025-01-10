@@ -1,5 +1,5 @@
 ---
-title: "crossrefapi(1) user manual | version 1.0.8 5e5e154"
+title: "crossrefapi(1) user manual | version 1.0.8 bbf37b8"
 author: "R. S. Doiel"
 pubDate: 2025-01-10
 ---
