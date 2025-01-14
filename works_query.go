@@ -65,27 +65,27 @@ type QuerySortOptions struct {
 
 // License represents license-specific filter parameters
 type LicenseFilter struct {
-	URL     string `yaml:"url,omitempty"`
-	Version string `yaml:"version,omitempty"`
-	Delay   *int   `yaml:"delay,omitempty"`
+	URL     string `key:"url,omitempty"`
+	Version string `key:"version,omitempty"`
+	Delay   *int   `key:"delay,omitempty"`
 }
 
 // Relation represents relation-specific filter parameters
 type RelationFilter struct {
-	Type       string `yaml:"type,omitempty"`
-	ObjectType string `yaml:"object-type,omitempty"`
-	Object     string `yaml:"object,omitempty"`
+	Type       string `key:"type,omitempty"`
+	ObjectType string `key:"object-type,omitempty"`
+	Object     string `key:"object,omitempty"`
 }
 
 type FullTextFilter struct {
-	Type        string `yaml:"type,omitempty"`
-	Application string `yaml:"application,omitempty"`
-	Version     string `yaml:"version,omitempty"`
+	Type        string `key:"type,omitempty"`
+	Application string `key:"application,omitempty"`
+	Version     string `key:"version,omitempty"`
 }
 
 type AwardFilter struct {
-	Funder string `yaml:"funder,omitempty"`
-	Number *int   `yaml:"number,omitempty"`
+	Funder string `key:"funder,omitempty"`
+	Number *int   `key:"number,omitempty"`
 }
 
 type DateParameter struct {
@@ -111,7 +111,7 @@ func (d *DateParameter) MarshalText() ([]byte, error) {
 	return []byte(d.String()), nil
 }
 
-// BoolParameter overrides boolean yaml marshalling to comply with CrossRef API spec
+// BoolParameter overrides boolean text marshalling to comply with CrossRef API spec
 type BoolParameter bool
 
 func (b BoolParameter) MarshalText() ([]byte, error) {
@@ -124,113 +124,113 @@ func (b BoolParameter) MarshalText() ([]byte, error) {
 
 // WorksFilter represents the available filter parameters for the /works endpoint
 type WorksFilter struct {
-	AlternativeID  string `yaml:"alternative-id,omitempty"`
-	Archive        string `yaml:"archive,omitempty"`
-	ArticleNumber  string `yaml:"article-number,omitempty"`
-	Assertion      string `yaml:"assertion,omitempty"`
-	AssertionGroup string `yaml:"assertion-group,omitempty"`
+	AlternativeID  string `key:"alternative-id,omitempty"`
+	Archive        string `key:"archive,omitempty"`
+	ArticleNumber  string `key:"article-number,omitempty"`
+	Assertion      string `key:"assertion,omitempty"`
+	AssertionGroup string `key:"assertion-group,omitempty"`
 
 	// Award related fields
-	Award *AwardFilter `yaml:"award,omitempty"`
+	Award *AwardFilter `key:"award,omitempty"`
 
-	CategoryName        string `yaml:"category-name,omitempty"`
-	CitationID          string `yaml:"citation-id,omitempty"`
-	ClinicalTrialNumber string `yaml:"clinical-trial-number,omitempty"`
-	ContainerTitle      string `yaml:"container-title,omitempty"`
-	ContentDomain       string `yaml:"content-domain,omitempty"`
-	DOI                 string `yaml:"doi,omitempty"`
+	CategoryName        string `key:"category-name,omitempty"`
+	CitationID          string `key:"citation-id,omitempty"`
+	ClinicalTrialNumber string `key:"clinical-trial-number,omitempty"`
+	ContainerTitle      string `key:"container-title,omitempty"`
+	ContentDomain       string `key:"content-domain,omitempty"`
+	DOI                 string `key:"doi,omitempty"`
 
 	// From date fields
-	FromAcceptedDate   *DateParameter `yaml:"from-accepted-date,omitempty"`
-	FromApprovedDate   *DateParameter `yaml:"from-approved-date,omitempty"`
-	FromAwardedDate    *DateParameter `yaml:"from-awarded-date,omitempty"`
-	FromCreatedDate    *DateParameter `yaml:"from-created-date,omitempty"`
-	FromDepositDate    *DateParameter `yaml:"from-deposit-date,omitempty"`
-	FromEventEndDate   *DateParameter `yaml:"from-event-end-date,omitempty"`
-	FromEventStartDate *DateParameter `yaml:"from-event-start-date,omitempty"`
-	FromIndexDate      *DateParameter `yaml:"from-index-date,omitempty"`
-	FromIssuedDate     *DateParameter `yaml:"from-issued-date,omitempty"`
-	FromOnlinePubDate  *DateParameter `yaml:"from-online-pub-date,omitempty"`
-	FromPostedDate     *DateParameter `yaml:"from-posted-date,omitempty"`
-	FromPrintPubDate   *DateParameter `yaml:"from-print-pub-date,omitempty"`
-	FromPubDate        *DateParameter `yaml:"from-pub-date,omitempty"`
-	FromUpdateDate     *DateParameter `yaml:"from-update-date,omitempty"`
+	FromAcceptedDate   *DateParameter `key:"from-accepted-date,omitempty"`
+	FromApprovedDate   *DateParameter `key:"from-approved-date,omitempty"`
+	FromAwardedDate    *DateParameter `key:"from-awarded-date,omitempty"`
+	FromCreatedDate    *DateParameter `key:"from-created-date,omitempty"`
+	FromDepositDate    *DateParameter `key:"from-deposit-date,omitempty"`
+	FromEventEndDate   *DateParameter `key:"from-event-end-date,omitempty"`
+	FromEventStartDate *DateParameter `key:"from-event-start-date,omitempty"`
+	FromIndexDate      *DateParameter `key:"from-index-date,omitempty"`
+	FromIssuedDate     *DateParameter `key:"from-issued-date,omitempty"`
+	FromOnlinePubDate  *DateParameter `key:"from-online-pub-date,omitempty"`
+	FromPostedDate     *DateParameter `key:"from-posted-date,omitempty"`
+	FromPrintPubDate   *DateParameter `key:"from-print-pub-date,omitempty"`
+	FromPubDate        *DateParameter `key:"from-pub-date,omitempty"`
+	FromUpdateDate     *DateParameter `key:"from-update-date,omitempty"`
 
 	// Full text related fields
-	FullText *FullTextFilter `yaml:"full-text,omitempty"`
+	FullText *FullTextFilter `key:"full-text,omitempty"`
 
 	// Other fields
-	Funder              string `yaml:"funder,omitempty"`
-	FunderDoiAssertedBy string `yaml:"funder-doi-asserted-by,omitempty"`
-	GroupTitle          string `yaml:"group-title,omitempty"`
+	Funder              string `key:"funder,omitempty"`
+	FunderDoiAssertedBy string `key:"funder-doi-asserted-by,omitempty"`
+	GroupTitle          string `key:"group-title,omitempty"`
 
 	// Boolean flags
-	HasAbstract            *BoolParameter `yaml:"has-abstract"`
-	HasAffiliation         *BoolParameter `yaml:"has-affiliation"`
-	HasArchive             *BoolParameter `yaml:"has-archive"`
-	HasAssertion           *BoolParameter `yaml:"has-assertion"`
-	HasAuthenticatedOrcid  *BoolParameter `yaml:"has-authenticated-orcid"`
-	HasAward               *BoolParameter `yaml:"has-award"`
-	HasClinicalTrialNumber *BoolParameter `yaml:"has-clinical-trial-number"`
-	HasContentDomain       *BoolParameter `yaml:"has-content-domain"`
-	HasDescription         *BoolParameter `yaml:"has-description"`
-	HasDomainRestriction   *BoolParameter `yaml:"has-domain-restriction"`
-	HasEvent               *BoolParameter `yaml:"has-event"`
-	HasFullText            *BoolParameter `yaml:"has-full-text"`
-	HasFunder              *BoolParameter `yaml:"has-funder"`
-	HasFunderDoi           *BoolParameter `yaml:"has-funder-doi"`
-	HasLicense             *BoolParameter `yaml:"has-license"`
-	HasOrcid               *BoolParameter `yaml:"has-orcid"`
-	HasReferences          *BoolParameter `yaml:"has-references"`
-	HasRelation            *BoolParameter `yaml:"has-relation"`
-	HasRorID               *BoolParameter `yaml:"has-ror-id"`
-	HasUpdate              *BoolParameter `yaml:"has-update"`
-	HasUpdatePolicy        *BoolParameter `yaml:"has-update-policy"`
-	IsUpdate               *BoolParameter `yaml:"is-update"`
+	HasAbstract            *BoolParameter `key:"has-abstract"`
+	HasAffiliation         *BoolParameter `key:"has-affiliation"`
+	HasArchive             *BoolParameter `key:"has-archive"`
+	HasAssertion           *BoolParameter `key:"has-assertion"`
+	HasAuthenticatedOrcid  *BoolParameter `key:"has-authenticated-orcid"`
+	HasAward               *BoolParameter `key:"has-award"`
+	HasClinicalTrialNumber *BoolParameter `key:"has-clinical-trial-number"`
+	HasContentDomain       *BoolParameter `key:"has-content-domain"`
+	HasDescription         *BoolParameter `key:"has-description"`
+	HasDomainRestriction   *BoolParameter `key:"has-domain-restriction"`
+	HasEvent               *BoolParameter `key:"has-event"`
+	HasFullText            *BoolParameter `key:"has-full-text"`
+	HasFunder              *BoolParameter `key:"has-funder"`
+	HasFunderDoi           *BoolParameter `key:"has-funder-doi"`
+	HasLicense             *BoolParameter `key:"has-license"`
+	HasOrcid               *BoolParameter `key:"has-orcid"`
+	HasReferences          *BoolParameter `key:"has-references"`
+	HasRelation            *BoolParameter `key:"has-relation"`
+	HasRorID               *BoolParameter `key:"has-ror-id"`
+	HasUpdate              *BoolParameter `key:"has-update"`
+	HasUpdatePolicy        *BoolParameter `key:"has-update-policy"`
+	IsUpdate               *BoolParameter `key:"is-update"`
 
 	// ISBN/ISSN
-	ISBN string `yaml:"isbn,omitempty"`
-	ISSN string `yaml:"issn,omitempty"`
+	ISBN string `key:"isbn,omitempty"`
+	ISSN string `key:"issn,omitempty"`
 
 	// License fields
-	License *LicenseFilter `yaml:"license,omitempty"`
+	License *LicenseFilter `key:"license,omitempty"`
 
 	// Award amount
-	GteAwardAmount int `yaml:"gte-award-amount,omitempty"`
-	LteAwardAmount int `yaml:"lte-award-amount,omitempty"`
+	GteAwardAmount int `key:"gte-award-amount,omitempty"`
+	LteAwardAmount int `key:"lte-award-amount,omitempty"`
 
 	// Member and identifiers
-	Member string `yaml:"member,omitempty"`
-	ORCID  string `yaml:"orcid,omitempty"`
-	Prefix string `yaml:"prefix,omitempty"`
+	Member string `key:"member,omitempty"`
+	ORCID  string `key:"orcid,omitempty"`
+	Prefix string `key:"prefix,omitempty"`
 
 	// Relation fields
-	Relation *RelationFilter `yaml:"relation,omitempty"`
+	Relation *RelationFilter `key:"relation,omitempty"`
 
 	// Type fields
-	RorID    string `yaml:"ror-id,omitempty"`
-	Type     string `yaml:"type,omitempty"`
-	TypeName string `yaml:"type-name,omitempty"`
+	RorID    string `key:"ror-id,omitempty"`
+	Type     string `key:"type,omitempty"`
+	TypeName string `key:"type-name,omitempty"`
 
 	// Until date fields
-	UntilAcceptedDate   *DateParameter `yaml:"until-accepted-date,omitempty"`
-	UntilApprovedDate   *DateParameter `yaml:"until-approved-date,omitempty"`
-	UntilAwardedDate    *DateParameter `yaml:"until-awarded-date,omitempty"`
-	UntilCreatedDate    *DateParameter `yaml:"until-created-date,omitempty"`
-	UntilDepositDate    *DateParameter `yaml:"until-deposit-date,omitempty"`
-	UntilEventEndDate   *DateParameter `yaml:"until-event-end-date,omitempty"`
-	UntilEventStartDate *DateParameter `yaml:"until-event-start-date,omitempty"`
-	UntilIndexDate      *DateParameter `yaml:"until-index-date,omitempty"`
-	UntilIssuedDate     *DateParameter `yaml:"until-issued-date,omitempty"`
-	UntilOnlinePubDate  *DateParameter `yaml:"until-online-pub-date,omitempty"`
-	UntilPostedDate     *DateParameter `yaml:"until-posted-date,omitempty"`
-	UntilPrintPubDate   *DateParameter `yaml:"until-print-pub-date,omitempty"`
-	UntilPubDate        *DateParameter `yaml:"until-pub-date,omitempty"`
-	UntilUpdateDate     *DateParameter `yaml:"until-update-date,omitempty"`
+	UntilAcceptedDate   *DateParameter `key:"until-accepted-date,omitempty"`
+	UntilApprovedDate   *DateParameter `key:"until-approved-date,omitempty"`
+	UntilAwardedDate    *DateParameter `key:"until-awarded-date,omitempty"`
+	UntilCreatedDate    *DateParameter `key:"until-created-date,omitempty"`
+	UntilDepositDate    *DateParameter `key:"until-deposit-date,omitempty"`
+	UntilEventEndDate   *DateParameter `key:"until-event-end-date,omitempty"`
+	UntilEventStartDate *DateParameter `key:"until-event-start-date,omitempty"`
+	UntilIndexDate      *DateParameter `key:"until-index-date,omitempty"`
+	UntilIssuedDate     *DateParameter `key:"until-issued-date,omitempty"`
+	UntilOnlinePubDate  *DateParameter `key:"until-online-pub-date,omitempty"`
+	UntilPostedDate     *DateParameter `key:"until-posted-date,omitempty"`
+	UntilPrintPubDate   *DateParameter `key:"until-print-pub-date,omitempty"`
+	UntilPubDate        *DateParameter `key:"until-pub-date,omitempty"`
+	UntilUpdateDate     *DateParameter `key:"until-update-date,omitempty"`
 
 	// Update fields
-	UpdateType string `yaml:"update-type,omitempty"`
-	Updates    string `yaml:"updates,omitempty"`
+	UpdateType string `key:"update-type,omitempty"`
+	Updates    string `key:"updates,omitempty"`
 }
 
 func stringifyValue(v interface{}) string {
@@ -277,8 +277,8 @@ func marshalStruct(v interface{}, prefix string) []string {
 		field := typ.Field(i)
 		fieldVal := val.Field(i)
 
-		// Get the yaml tag
-		tag := field.Tag.Get("yaml")
+		// Get the key tag
+		tag := field.Tag.Get("key")
 		if tag == "" {
 			tag = field.Name
 		}
