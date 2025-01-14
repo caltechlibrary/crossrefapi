@@ -173,6 +173,16 @@ func TestWorksQuery_Encode(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "With elements",
+			query: WorksQuery{
+				Elements: []string{"title", "abstract", "author"},
+			},
+			want: url.Values{
+				"select": []string{"title,abstract,author"},
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {

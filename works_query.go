@@ -367,6 +367,10 @@ type WorksQuery struct {
 	// Filters on different keys are applied with AND semantic.
 	// Filters on the same key are applied with OR semantic.
 	Filters *WorksFilter
+	// Results projection.
+	// Restrict the API results to a subset of fields.
+	// See API docs for available fields
+	Elements []string
 }
 
 func (q WorksQuery) Encode() (values url.Values, err error) {
@@ -396,5 +400,12 @@ func (q WorksQuery) Encode() (values url.Values, err error) {
 		filters := q.Filters.Encode()
 		values.Add("filter", filters)
 	}
+
+	// Projection
+	if q.Elements != nil {
+		projection := strings.Join(q.Elements, ",")
+		values.Add("select", projection)
+	}
+
 	return values, nil
 }
