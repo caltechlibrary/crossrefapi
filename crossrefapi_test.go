@@ -112,7 +112,7 @@ func TestClient(t *testing.T) {
 	}
 
 	// Now test Works
-	doi := "10.1037/0003-066x.59.1.29"                        //"10.1000/xyz123"
+	doi := "10.1037/0003-066x.59.1.29"                       //"10.1000/xyz123"
 	doiURL := "https://dx.doi.org/10.1037/0003-066x.59.1.29" // "https://dx.doi.org/10.1000/xyz123"
 
 	src, err = api.WorksJSON(doi)
@@ -150,7 +150,6 @@ func TestClient(t *testing.T) {
 		t.FailNow()
 	}
 
-
 	// This DOI has an article number, 032435
 	doiURL = "https://doi.org/10.1103/PhysRevA.105.032435"
 	works3, err := api.Works(doiURL)
@@ -165,10 +164,9 @@ func TestClient(t *testing.T) {
 	if works3.Message.ArticleNumber != "032435" {
 		t.Errorf("Expected article number 032435, got %q", works3.Message.ArticleNumber)
 		src, _ := json.MarshalIndent(works3.Message, "", "    ") // DEBUG
-		fmt.Fprintf(os.Stderr, "DEBUG works\n%s\n", src) // DEBUG
+		fmt.Fprintf(os.Stderr, "DEBUG works\n%s\n", src)         // DEBUG
 		t.FailNow()
 	}
-
 
 }
 
@@ -178,5 +176,3 @@ func TestMain(m *testing.M) {
 	log.Printf("mailto: %q", MailTo)
 	os.Exit(m.Run())
 }
-
-

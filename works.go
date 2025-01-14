@@ -36,76 +36,76 @@ type Message struct {
 	// UpdateTo ????
 	UpdateTo []*Updated `json:"updated-to,omitempty"`
 	// StandardsBody, ???
-	StandardsBody       []*Organization      `json:"standards-body,omitempty"`
-	EditionNumber       string               `json:"edition-number,omitempty"`
-	GroupTitle          string             `json:"group-title,omitempty"`
-	Publisher           string               `json:"publisher,omitempty"`
-	Issue               string               `json:"issue,omitempty"`
-	IsbnType            []*Identifier        `json:"isbn-type,omitempty"`
-	License             []*License           `json:"license,omitempty"`
-	Funder              []*Funder            `json:"funder,omitempty"`
-	ContentDomain       *ContentDomain       `json:"content-domain,omitempty"`
-	Chair               []*Person            `json:"chair,omitempty"`
-	ShortContainerTitle []string             `json:"short-container-title,omitempty"`
-	Accepted            *DateObject          `json:"accepted,omitempty"`
-	ContentUpdated      *DateObject          `json:"content-updated,omitempty"`
-	PublishedPrint      *DateObject          `json:"published-print,omitempty"`
-	Abstract            string               `json:"abstract,omitempty"`
-	DOI                 string               `json:"doi,omitempty"`
-	Type                string               `json:"type,omitempty"`
-	Created             *DateObject          `json:"created,omitempty"`
-	Approved            *DateObject          `json:"approved,omitempty"`
-	Page                string               `json:"page,omitempty"`
-	UpdatePolicy        string               `json:"update-policy,omitempty"`
-	Source              string               `json:"source,omitempty"`
-	Title               []string             `json:"title,omitempty"`
-	Prefix              string               `json:"prefix,omitempty"`
-	Volume              string               `json:"volume,omitempty"`
-	ClinicalTrailNumber *ClinicalTrailNumber `json:"clinical-trail-number,omitempty"`
-	Author              []*Person            `json:"author,omitempty"`
-	Member              string               `json:"member,omitempty"`
-	ContentCreated      *DateObject          `json:"content-created,omitempty"`
-	PublishedOnline     *DateObject          `json:"published-online,omitempty"`
-	Reference           []*Reference         `json:"reference,omitempty"`
-	ContainerTitle      []string             `json:"container-title,omitempty"`
-	Review              *Review              `json:"review,omitempty"`
-	OriginalTitle       []string             `json:"original-title,omitempty"`
-	Language            string               `json:"language,omitempty"`
-	Link                []*Link              `json:"link,omitempty"`
-	Deposited           *DateObject          `json:"deposited,omitempty"`
+	StandardsBody       []*Organization        `json:"standards-body,omitempty"`
+	EditionNumber       string                 `json:"edition-number,omitempty"`
+	GroupTitle          string                 `json:"group-title,omitempty"`
+	Publisher           string                 `json:"publisher,omitempty"`
+	Issue               string                 `json:"issue,omitempty"`
+	IsbnType            []*Identifier          `json:"isbn-type,omitempty"`
+	License             []*License             `json:"license,omitempty"`
+	Funder              []*Funder              `json:"funder,omitempty"`
+	ContentDomain       *ContentDomain         `json:"content-domain,omitempty"`
+	Chair               []*Person              `json:"chair,omitempty"`
+	ShortContainerTitle []string               `json:"short-container-title,omitempty"`
+	Accepted            *DateObject            `json:"accepted,omitempty"`
+	ContentUpdated      *DateObject            `json:"content-updated,omitempty"`
+	PublishedPrint      *DateObject            `json:"published-print,omitempty"`
+	Abstract            string                 `json:"abstract,omitempty"`
+	DOI                 string                 `json:"doi,omitempty"`
+	Type                string                 `json:"type,omitempty"`
+	Created             *DateObject            `json:"created,omitempty"`
+	Approved            *DateObject            `json:"approved,omitempty"`
+	Page                string                 `json:"page,omitempty"`
+	UpdatePolicy        string                 `json:"update-policy,omitempty"`
+	Source              string                 `json:"source,omitempty"`
+	Title               []string               `json:"title,omitempty"`
+	Prefix              string                 `json:"prefix,omitempty"`
+	Volume              string                 `json:"volume,omitempty"`
+	ClinicalTrailNumber *ClinicalTrailNumber   `json:"clinical-trail-number,omitempty"`
+	Author              []*Person              `json:"author,omitempty"`
+	Member              string                 `json:"member,omitempty"`
+	ContentCreated      *DateObject            `json:"content-created,omitempty"`
+	PublishedOnline     *DateObject            `json:"published-online,omitempty"`
+	Reference           []*Reference           `json:"reference,omitempty"`
+	ContainerTitle      []string               `json:"container-title,omitempty"`
+	Review              *Review                `json:"review,omitempty"`
+	OriginalTitle       []string               `json:"original-title,omitempty"`
+	Language            string                 `json:"language,omitempty"`
+	Link                []*Link                `json:"link,omitempty"`
+	Deposited           *DateObject            `json:"deposited,omitempty"`
 	Score               float32                `json:"score,omitempty"`
-	Degree              string               `json:"degree,omitempty"`
-	SubTitle            []string             `json:"subtitle,omitempty"`
-	Translator          []*Person            `json:"translator,omitempty"`
-	FreeToRead          *DateRange           `json:"free-to-read,omitempty"`
-	Editor              []*Person            `json:"editor,omitempty"`
-	ComponentNumber     string               `json:"component-number,omitempty"`
-	ShortTitle          []string             `json:"short-title,omitempty"`
-	Issued              *DateObject          `json:"issued,omitempty"`
-	ISBN                []string             `json:"isbn,omitempty"`
-	ReferenceCount      int                  `json:"reference-count,omitempty"`
-	PartNumber          string               `json:"part-number,omitempty"`
-	JournalIssue        *JournalIssue        `json:"journal-issue,omitempty"`
-	ArticleNumber       string               `json:"article-number,omitempty"`
-	AlternativeId       []string             `json:"alternative-id,omitempty"`
-	URL                 string               `json:"URL,omitempty"`
-	Archive             []string             `json:"archive,omitempty"`
+	Degree              string                 `json:"degree,omitempty"`
+	SubTitle            []string               `json:"subtitle,omitempty"`
+	Translator          []*Person              `json:"translator,omitempty"`
+	FreeToRead          *DateRange             `json:"free-to-read,omitempty"`
+	Editor              []*Person              `json:"editor,omitempty"`
+	ComponentNumber     string                 `json:"component-number,omitempty"`
+	ShortTitle          []string               `json:"short-title,omitempty"`
+	Issued              *DateObject            `json:"issued,omitempty"`
+	ISBN                []string               `json:"isbn,omitempty"`
+	ReferenceCount      int                    `json:"reference-count,omitempty"`
+	PartNumber          string                 `json:"part-number,omitempty"`
+	JournalIssue        *JournalIssue          `json:"journal-issue,omitempty"`
+	ArticleNumber       string                 `json:"article-number,omitempty"`
+	AlternativeId       []string               `json:"alternative-id,omitempty"`
+	URL                 string                 `json:"URL,omitempty"`
+	Archive             []string               `json:"archive,omitempty"`
 	Relation            map[string][]*Property `json:"relation,omitempty"`
-	ISSN                []string             `json:"issn,omitempty"`
-	IssnType            []*Identifier        `json:"issn-type,omitempty"`
-	Subject             []string             `json:"subject,omitempty"`
-	PublishedOther      *DateObject          `json:"published-other,omitempty"`
-	Published           *DateObject          `json:"published,omitempty"`
-	Assertion           []*Assertion         `json:"assertion,omitempty"`
+	ISSN                []string               `json:"issn,omitempty"`
+	IssnType            []*Identifier          `json:"issn-type,omitempty"`
+	Subject             []string               `json:"subject,omitempty"`
+	PublishedOther      *DateObject            `json:"published-other,omitempty"`
+	Published           *DateObject            `json:"published,omitempty"`
+	Assertion           []*Assertion           `json:"assertion,omitempty"`
 }
 
 type Identifier struct {
-	Label string `json:"label,omitempty"`
-	Name  string `json:"name,omitempty"`
-	Type  string `json:"type,omitempty"`
-	Value string `json:"value,omitempty"`
-	IdType string `json:"id-type,omitempty"`
-	Id     string `json:"id,omitempty"`
+	Label      string `json:"label,omitempty"`
+	Name       string `json:"name,omitempty"`
+	Type       string `json:"type,omitempty"`
+	Value      string `json:"value,omitempty"`
+	IdType     string `json:"id-type,omitempty"`
+	Id         string `json:"id,omitempty"`
 	AssertedBy string `json:"asserted-by,omitempty"`
 }
 
@@ -123,10 +123,10 @@ type Person struct {
 
 type Organization struct {
 	IDs        []*Identifier `json:"id,omitempty"`
-	Name       string   `json:"name,omitempty"`
-	Place      []string `json:"place,omitempty"`
-	Department []string `json:"department,omitempty"`
-	Acronym    []string `json:"acronym,omitempty"`
+	Name       string        `json:"name,omitempty"`
+	Place      []string      `json:"place,omitempty"`
+	Department []string      `json:"department,omitempty"`
+	Acronym    []string      `json:"acronym,omitempty"`
 }
 
 type License struct {
@@ -639,7 +639,7 @@ func isSameRelations(r1 map[string][]*Property, r2 map[string][]*Property) bool 
 		return false
 	}
 	sort.Strings(r1Keys)
-	
+
 	for _, key := range r1Keys {
 		if propList1, ok := r1[key]; ok {
 			if propList2, ok := r2[key]; ok {
@@ -647,7 +647,7 @@ func isSameRelations(r1 map[string][]*Property, r2 map[string][]*Property) bool 
 					return false
 				}
 				for _, prop1 := range propList1 {
-					foundIt :=  false
+					foundIt := false
 					for _, prop2 := range propList2 {
 						if prop1.IsSame(prop2) {
 							foundIt = true
@@ -1014,7 +1014,7 @@ func (msg *Message) Changes(t *Message) *Message {
 	if msg.EditionNumber != t.EditionNumber {
 		nMsg.EditionNumber = t.EditionNumber
 	}
-	if strings.Compare(msg.GroupTitle, t.GroupTitle) != 0{
+	if strings.Compare(msg.GroupTitle, t.GroupTitle) != 0 {
 		nMsg.GroupTitle = t.GroupTitle
 	}
 	if msg.Publisher != t.Publisher {
@@ -1207,7 +1207,7 @@ func (msg *Message) Diff(t *Message) (*Message, *Message) {
 	// Aggregate the changed fields
 	oMsg := new(Message)
 	nMsg := new(Message)
-	if !isSameOrganizations(msg.Institution,t.Institution) {
+	if !isSameOrganizations(msg.Institution, t.Institution) {
 		oMsg.Institution = msg.Institution
 		nMsg.Institution = t.Institution
 	}
@@ -1235,7 +1235,7 @@ func (msg *Message) Diff(t *Message) (*Message, *Message) {
 		oMsg.EditionNumber = msg.EditionNumber
 		nMsg.EditionNumber = t.EditionNumber
 	}
-	if strings.Compare(msg.GroupTitle, t.GroupTitle) != 0{
+	if strings.Compare(msg.GroupTitle, t.GroupTitle) != 0 {
 		oMsg.GroupTitle = msg.GroupTitle
 		nMsg.GroupTitle = t.GroupTitle
 	}
