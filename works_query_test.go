@@ -22,7 +22,7 @@ func TestWorksFilter_MarshalText(t *testing.T) {
 		{
 			name: "Single field",
 			filter: WorksFilter{
-				DOI: "10.1234/test",
+				DOI: []string{"10.1234/test"},
 			},
 			want:    "doi:10.1234/test",
 			wantErr: false,
@@ -30,9 +30,9 @@ func TestWorksFilter_MarshalText(t *testing.T) {
 		{
 			name: "Multiple fields",
 			filter: WorksFilter{
-				DOI:  "10.1234/test",
-				ISSN: "1234-5678",
-				Type: "journal-article",
+				DOI:  []string{"10.1234/test"},
+				ISSN: []string{"1234-5678"},
+				Type: []string{"journal-article"},
 			},
 			want:    "doi:10.1234/test,issn:1234-5678,type:journal-article",
 			wantErr: false,
@@ -40,10 +40,10 @@ func TestWorksFilter_MarshalText(t *testing.T) {
 		{
 			name: "With date parameter",
 			filter: WorksFilter{
-				FromIssuedDate: &DateParameter{
+				FromIssuedDate: []DateParameter{{
 					Year:  2020,
 					Month: 6,
-				},
+				}},
 			},
 			want:    "from-issued-date:2020-6",
 			wantErr: false,
@@ -61,22 +61,27 @@ func TestWorksFilter_MarshalText(t *testing.T) {
 			name: "With nested filter",
 			filter: WorksFilter{
 				License: &LicenseFilter{
-					URL:     "http://example.com",
-					Version: "1.0",
+					URL:     []string{"http://example.com"},
+					Version: []string{"1.0"},
 				},
 			},
 			want:    "license.url:http://example.com,license.version:1.0",
+			wantErr: false,
+		},
+		{
+			name: "Multiple values for same field",
+			filter: WorksFilter{
+				DOI:  []string{"10.1234/test1", "10.1234/test2"},
+				Type: []string{"journal-article", "book-chapter"},
+			},
+			want:    "doi:10.1234/test1,doi:10.1234/test2,type:journal-article,type:book-chapter",
 			wantErr: false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.filter.MarshalText()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("WorksFilter.MarshalText() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := tt.filter.Encode()
 			if string(got) != tt.want {
 				t.Errorf("WorksFilter.MarshalText() = %v, want %v", string(got), tt.want)
 			}
@@ -135,7 +140,7 @@ func TestWorksQuery_Encode(t *testing.T) {
 			name: "Filters query",
 			query: WorksQuery{
 				Filters: &WorksFilter{
-					DOI: "10.1234/example.doi",
+					DOI: []string{"10.1234/example.doi"},
 				},
 			},
 			want: url.Values{
@@ -154,10 +159,10 @@ func TestWorksQuery_Encode(t *testing.T) {
 					Rows: 10,
 				},
 				Filters: &WorksFilter{
-					DOI:    "10.1234/example.doi",
-					ISSN:   "1234-5678",
-					ORCID:  "0000-0001-2345-6789",
-					Prefix: "10.1234",
+					DOI:    []string{"10.1234/example.doi"},
+					ISSN:   []string{"1234-5678"},
+					ORCID:  []string{"0000-0001-2345-6789"},
+					Prefix: []string{"10.1234"},
 				},
 			},
 			want: url.Values{
@@ -165,6 +170,16 @@ func TestWorksQuery_Encode(t *testing.T) {
 				"query.author": []string{"John Doe"},
 				"rows":         []string{"10"},
 				"filter":       []string{"doi:10.1234/example.doi,issn:1234-5678,orcid:0000-0001-2345-6789,prefix:10.1234"},
+			},
+			wantErr: false,
+		},
+		{
+			name: "With elements",
+			query: WorksQuery{
+				Elements: []string{"title", "abstract", "author"},
+			},
+			want: url.Values{
+				"select": []string{"title,abstract,author"},
 			},
 			wantErr: false,
 		},
@@ -309,12 +324,12 @@ func TestWorksQuery_RealAPICall(t *testing.T) {
 		},
 		Filters: &WorksFilter{
 			HasAbstract: (*BoolParameter)(boolPtr(true)),
-			FromIssuedDate: &DateParameter{
+			FromIssuedDate: []DateParameter{{
 				Year: 1905,
-			},
-			UntilIssuedDate: &DateParameter{
+			}},
+			UntilIssuedDate: []DateParameter{{
 				Year: 1955,
-			},
+			}},
 		},
 	}
 
