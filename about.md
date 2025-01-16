@@ -11,16 +11,16 @@ authors:
     orcid: "https://orcid.org/0000-0003-0900-6903"
 
 repository-code: "https://github.com/caltechlibrary/crossrefapi"
-version: 1.0.8
+version: 1.0.9
 license-url: "https://caltechlibrary/crossrefapi/LICENSE"
 keywords: [ "CrossRef", "DOI", "metadata" ]
-
+date-released: 2025-01-16
 ---
 
 About this software
 ===================
 
-## crossrefapi 1.0.8
+## crossrefapi 1.0.9
 
 ### Authors
 
@@ -28,7 +28,7 @@ About this software
 
 ### Contributors
 
-- Louis Duchemmin
+- Louis Duchemin
 
 ### Maintainers
 
