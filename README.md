@@ -1,8 +1,8 @@
 
 # crossrefapi
 
-This is a go package for working with the CrossRef API. It is inspired by
-the an excellent CrossRefAPI Python package listed in the CrossRef API docs.
+This is a go package for working with the Crossref API. It is inspired by
+the an excellent CrossRefAPI Python package listed in the Crossref API docs.
 This package is meant to follow the "polite" guidelines for interacting 
 with the public API at api.crossref.org.
 
@@ -60,6 +60,6 @@ You can compare two copies of a "works" response and see what has changed.
 
 ## Reference
 
-- [CrossRef API Docs](https://github.com/CrossRef/rest-api-doc)
-- [CrossRef Schemas](https://api.crossref.org/swagger-ui/index.html)
+- [Crossref API Docs](https://api.crossref.org/)
+- [Crossref Schemas](https://www.crossref.org/documentation/schema-library/)
 - [CrossRefAPI](https://github.com/fabiobatalha/crossrefapi) - Python implementation
