@@ -8,19 +8,19 @@ public CrossRef API"
 authors:
   - family-names: Doiel
     given-names: Robert
-    orcid: "https://orcid.org/0000-0003-0900-6903"
+    orcid: ""
 
 repository-code: "https://github.com/caltechlibrary/crossrefapi"
-version: 1.0.9
+version: 1.0.10
 license-url: "https://caltechlibrary/crossrefapi/LICENSE"
 keywords: [ "CrossRef", "DOI", "metadata" ]
-date-released: 2025-01-16
+date-released: 2025-11-19
 ---
 
 About this software
 ===================
 
-## crossrefapi 1.0.9
+## crossrefapi 1.0.10
 
 ### Authors
 
