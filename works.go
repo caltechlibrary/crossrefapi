@@ -140,6 +140,7 @@ type Funder struct {
 	Name          string   `json:"name,omitempty"`
 	DOI           string   `json:"DOI,omitempty"`
 	DoiAssertedBy string   `json:"doi-asserted-by,omitempty"`
+	Identifiers []*Identifier `json:"id,omitempty"`
 	Award         []string `json:"award,omitempty"`
 }
 
