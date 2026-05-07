@@ -1,24 +1,32 @@
+
+# generated with CMTools 1.0.10 a347d4a
+
 #
 # Makefile for running pandoc on all Markdown docs ending in .md
 #
 PROJECT = crossrefapi
 
-MD_PAGES = $(shell ls -1 *.md | grep -v 'nav.md')
+PANDOC = $(shell which pandoc)
 
-HTML_PAGES = $(shell ls -1 *.md | grep -v 'nav.md' | sed -E 's/.md/.html/g')
+MD_PAGES = $(shell ls -1 *.md)
 
-build: $(HTML_PAGES) $(MD_PAGES) pagefind
+HTML_PAGES = $(shell ls -1 *.md | sed -E 's/\.md/\.html/g')
+
+build: $(HTML_PAGES) $(MD_PAGES) # pagefind
 
 $(HTML_PAGES): $(MD_PAGES) .FORCE
-	pandoc --metadata title=$(basename $@) -s --to html5 $(basename $@).md -o $(basename $@).html --lua-filter=links-to-html.lua --template=page.tmpl
-	@if [ "$(basename $@)" = "README" ]; then mv README.html index.html; git add index.html; else git add "$(basename $@).html"; fi
+	if [ -f $(PANDOC) ]; then $(PANDOC) --metadata title=$(basename $@) -s --to html5 $(basename $@).md -o $(basename $@).html \
+		--lua-filter=links-to-html.lua \
+		--lua-filter=add-col-scope.lua \
+	    --template=page.tmpl; fi
+	@if [ $@ = "README.html" ]; then mv README.html index.html; fi
 
 pagefind: .FORCE
-	pagefind --verbose --exclude-selectors="nav,header,footer" --site .
+	# NOTE: I am not including most of the archive in PageFind index since it doesn't make sense in this case.
+	pagefind --verbose --glob="{*.html,docs/*.html}" --force-language en-US --exclude-selectors="nav,header,footer" --output-path ./pagefind --site .
 	git add pagefind
 
-
 clean:
-	@if [ -f index.html ]; then rm *.html; fi
+	@rm *.html
 
 .FORCE:
