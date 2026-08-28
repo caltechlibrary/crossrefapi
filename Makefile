@@ -39,7 +39,7 @@ endif
 
 DIST_FOLDERS = bin/*
 
-build: version.go $(PROGRAMS) man CITATION.cff about.md installer.sh installer.ps1
+build: version.go $(PROGRAMS) man CITATION.cff installer.sh installer.ps1
 
 version.go: .FORCE
 	echo '' | pandoc --from t2t --to plain \
@@ -85,11 +85,6 @@ $(MAN_PAGES): .FORCE
 CITATION.cff: .FORCE
 	@cat codemeta.json | sed -E   's/"@context"/"at__context"/g;s/"@type"/"at__type"/g;s/"@id"/"at__id"/g' >_codemeta.json
 	@echo '' | pandoc --metadata title="Cite $(PROJECT)" --metadata-file=_codemeta.json --template=codemeta-cff.tmpl >CITATION.cff
-
-about.md: .FORCE 
-	@cat codemeta.json | sed -E 's/"@context"/"at__context"/g;s/"@type"/"at__type"/g;s/"@id"/"at__id"/g' >_codemeta.json
-	@echo "" | pandoc --metadata-file=_codemeta.json --template codemeta-about.tmpl >about.md 2>/dev/null;
-	@if [ -f _codemeta.json ]; then rm _codemeta.json; fi
 
 installer.sh: .FORCE
 	@echo '' | pandoc --metadata title="Installer" --metadata git_org_or_person="$(GIT_GROUP)" --metadata-file codemeta.json --template codemeta-bash-installer.tmpl >installer.sh
