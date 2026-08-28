@@ -12,13 +12,13 @@ If you are running macOS or Linux you can install released versions of crossrefa
 with the following curl command.
 
 ~~~
-curl https://caltechlibrary.github.io/crossrefapi/installer.sh
+curl https://software.library.caltech.edu/crossrefapi/installer.sh
 ~~~
 
 On Windows the install command in Powershell is 
 
 ~~~
-irm https://caltechlibrary.github.io/crossrefapi/installer.ps1 | iex
+irm https://software.library.caltech.edu/crossrefapi/installer.ps1 | iex
 ~~~
 
 Compiled version
