@@ -54,3 +54,4 @@ idxdefs/*
 *.bak
 _codemeta.json
 doi_examples
+man

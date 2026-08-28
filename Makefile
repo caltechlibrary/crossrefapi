@@ -156,9 +156,6 @@ refresh:
 	git fetch origin
 	git pull origin $(BRANCH)
 
-publish: build website save .FORCE
-	./publish.bash
-
 
 dist/Linux-x86_64: $(PROGRAMS)
 	@mkdir -p dist/bin
