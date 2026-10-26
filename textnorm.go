@@ -26,6 +26,12 @@ const (
 	// WarnScriptUnmapped means a sub or superscript has a character with no
 	// Unicode form in the symbol table; its text was kept as it was.
 	WarnScriptUnmapped = "script-unmapped"
+	// WarnMathLinear means a formula had a script or root the Unicode forms
+	// cannot show, so it was written in a linear form such as "Z_N".
+	WarnMathLinear = "math-linear"
+	// WarnMathUnconverted means a MathML element has no conversion yet; the
+	// formula was reduced to its text content. Fragment is the element name.
+	WarnMathUnconverted = "math-unconverted"
 )
 
 // Warning describes something the text normalizer could not convert cleanly.
@@ -67,8 +73,10 @@ var (
 // and a space between a formula and a following hyphen is removed. Non-breaking
 // and thin spaces count as whitespace.
 //
-// A formula (MathML, recognized by its namespace) is reduced to its text
-// content for now. A fragment that is not well-formed (such as a raw "<") is
+// A formula (MathML, recognized by its namespace) is converted to Unicode text
+// (see mathUnicode): scripts become Unicode super and subscripts, fractions
+// "a/b", roots "√x". Anything that cannot be shown that way is written in a
+// linear form or reduced to its text, with a warning. A fragment that is not well-formed (such as a raw "<") is
 // still converted, with a WarnParseFallback warning. The result is plain text:
 // do not feed it back in if it contains "<".
 //
@@ -222,7 +230,7 @@ func flatten(nodes []*node, sym *Symbols, warnings *[]Warning) []event {
 		case n.name == "":
 			ev = append(ev, event{kind: evText, text: n.text})
 		case n.space == mathMLNamespace || n.name == "math":
-			if t := mathText(n); t != "" {
+			if t := mathUnicode(n, sym, warnings); t != "" {
 				ev = append(ev, event{kind: evAtom, text: t, math: true})
 			}
 		case n.name == "br":
@@ -284,27 +292,6 @@ func scriptAtom(n *node, sym *Symbols, warnings *[]Warning) (event, bool) {
 		mapped.WriteString(v)
 	}
 	return event{kind: evAtom, text: mapped.String(), glue: true}, true
-}
-
-// mathText returns the text content of a formula, without the layout
-// whitespace between its elements. Phase 3 replaces this with a real
-// conversion; until then the tokens are joined as they stand.
-func mathText(n *node) string {
-	var b strings.Builder
-	var walk func(*node)
-	walk = func(n *node) {
-		if n.name == "" {
-			if strings.TrimSpace(n.text) != "" {
-				b.WriteString(strings.Join(strings.FieldsFunc(n.text, unicode.IsSpace), " "))
-			}
-			return
-		}
-		for _, k := range n.kids {
-			walk(k)
-		}
-	}
-	walk(n)
-	return b.String()
 }
 
 // resolveEvents joins events into text, deciding every whitespace gap.
@@ -389,4 +376,6 @@ func firstRune(s string) rune {
 
 func isHyphen(r rune) bool { return r == '-' || r == '\u2010' }
 
-func isAlnum(r rune) bool { return unicode.IsLetter(r) || unicode.IsDigit(r) }
+// isAlnum reports a letter or any kind of number, so a superscript digit
+// (²) counts as part of a word.
+func isAlnum(r rune) bool { return unicode.IsLetter(r) || unicode.IsNumber(r) }
