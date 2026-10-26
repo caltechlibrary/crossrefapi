@@ -52,6 +52,29 @@ You can compare two copies of a "works" response and see what has changed.
     fmt.Printf("\n%s\n", src)
 ```
 
+## Text normalization (titles and abstracts)
+
+From v1.1.0 the package turns Crossref's marked-up titles and JATS abstracts
+into text and HTML an institutional repository can use: tags removed,
+subscripts and formulas converted, layout whitespace tidied, and abstracts as
+HTML that Invenio RDM's sanitizer keeps, with formulas as TeX in `\( ... \)`.
+
+```go
+    title, warnings := works.Message.FullTitle()
+    // Euclid preparation: CII. Non-Gaussianity of two-point statistics likelihood: ...
+    description, _ := works.Message.HTMLAbstract()
+    // <p>The extraction of cosmological information from two-point statistics ...</p>
+    others, _ := works.Message.AlternateTitles()
+    // the record's other titles, if it has any
+```
+
+`crossrefapi.PlainText(s)` and `crossrefapi.HTMLAbstract(s)` do the same for a
+string. `crossrefapi.NewNormalizer(path)` makes a `Normalizer` that uses your own
+override of the symbol table. Everything that cannot be converted cleanly comes
+back as a warning, so a program can hand those records to a person. See
+[Text normalization](text_normalization.md) for the rules, the warning codes and
+the override file.
+
 ## Command line example
 
 ```
@@ -62,6 +85,7 @@ You can compare two copies of a "works" response and see what has changed.
 
 - [Installation](INSTALL.md)
 - [User manual](user_manual.md)
+- [Text normalization](text_normalization.md) - titles, subtitles and abstracts as text and HTML
 - [crossrefapi(1)](crossrefapi.1.md) - the command line tool's manual page
 
 ## Reference

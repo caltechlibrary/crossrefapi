@@ -54,7 +54,7 @@
   "dateCreated": "2018-07-05",
   "dateModified": "2026-10-26",
   "datePublished": "2026-10-26",
-  "description": "A Golang package and command line tool for working with the public CrossRef API",
+  "description": "A Golang package and command line tool for working with the public CrossRef API, with a text layer that turns CrossRef titles and abstracts into plain text and repository-safe HTML",
   "keywords": [
     "CrossRef",
     "DOI",
@@ -74,9 +74,9 @@
     "Go >= 1.27.1",
     "Pandoc (man pages)"
   ],
-  "version": "1.0.11",
+  "version": "1.1.0",
   "developmentStatus": "active",
   "issueTracker": "https://github.com/caltechlibrary/crossrefapi/issues",
   "downloadUrl": "https://github.com/caltechlibrary/crossrefapi/releases",
-  "releaseNotes": "v1.0.11 changes how the project is built, released and documented. The Go package and command line tool behave as in v1.0.10.\n\nChanged:\n- The Makefile follows the current Caltech Library pattern: `make` builds, `make test` runs offline, `make generate` regenerates `version.go`, `CITATION.cff` and the installers from `codemeta.json`, and `make release` then `./release.bash` builds the release and creates the draft GitHub release.\n- `make test` no longer calls the live CrossRef API. Run `make test-live MAILTO=you@example.edu` for that; the live tests skip without a mailto address.\n- Documentation sources moved to `docs/` and the site at https://software.library.caltech.edu/crossrefapi/ is built in CI. The committed HTML, `css/`, `assets/` and the old site scripts are gone.\n- `codemeta.json` is CodeMeta 4.0, with a working license URL. The `codemeta-*.tmpl` files are removed.\n- 32-bit Raspberry Pi builds are dropped.\n- `github.com/google/go-querystring` is updated to v1.2.0.\n- `.gitignore` no longer ignores `testdata/` or `.github/`.\n\nFixed:\n- The removed `static.yml` workflow published the whole repository as the documentation site."
+  "releaseNotes": "v1.1.0 adds a text layer for CrossRef titles and abstracts. Nothing that existed changes.\n\nAdded:\n- `PlainText(s)`: a title fragment as plain Unicode text. Tags are removed, entities decoded, subscripts and MathML formulas converted, and the layout whitespace publishers add around markup tidied.\n- `(*Message).FullTitle()` and `(*Message).AlternateTitles()`: the title and subtitle as plain text (the subtitle left out when empty or already in the title), and the record's other titles. No language is guessed.\n- `HTMLAbstract(s)` and `(*Message).HTMLAbstract()`: a JATS abstract as HTML that Invenio RDM's sanitizer keeps, with MathML as TeX in `\\( ... \\)`, the leading \"Abstract\" heading and copyright text dropped, attributes stripped and links limited to http, https, mailto and relative addresses.\n- `Normalizer` and `NewNormalizer(path)`: the same conversions with an override of the embedded symbol table (`symbols.json`). A Normalizer never changes after it is built, so it can be shared between goroutines.\n- `Warning` and its codes (`parse-fallback`, `script-unmapped`, `math-linear`, `math-unconverted`, `multiple-titles`): what could not be converted cleanly, returned beside the best text available.\n- A user guide (docs/text_normalization.md), a package overview and runnable examples.\n\nNotes:\n- Whitespace around markup is a heuristic, chosen on real CrossRef records; the guide lists the rules and their known limits.\n- The TeX in an abstract needs MathJax, or another renderer that reads the `\\( ... \\)` delimiters, on the page that shows it.\n- The tests use captured CrossRef responses in testdata/ and run offline."
 }
