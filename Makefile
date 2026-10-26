@@ -11,7 +11,7 @@ RELEASE_HASH=$(shell git log --pretty=format:'%h' -n 1)
 
 PROGRAMS = $(shell ls -1 cmd)
 
-MAN_PAGES = $(shell ls -1 *.1.md | sed -E 's/\.1.md/.1/g')
+MAN_PAGES = $(shell ls -1 docs/*.1.md 2>/dev/null | sed -E 's|^docs/||; s/\.1.md/.1/g')
 
 HTML_PAGES = $(shell find . -type f | grep -E '\.html')
 
@@ -74,13 +74,14 @@ version.go: .FORCE
 $(PROGRAMS): $(PACKAGE)
 	@mkdir -p bin
 	go build -o "bin/$@$(EXT)" cmd/$@/*.go
-	@./bin/$@ -help >$@.1.md
+	@mkdir -p docs
+	@./bin/$@ -help >docs/$@.1.md
 
 man: $(MAN_PAGES)
 
 $(MAN_PAGES): .FORCE
 	mkdir -p man/man1
-	pandoc $@.md --from markdown --to man -s >man/man1/$@
+	pandoc docs/$@.md --from markdown --to man -s >man/man1/$@
 
 CITATION.cff: .FORCE
 	@cat codemeta.json | sed -E   's/"@context"/"at__context"/g;s/"@type"/"at__type"/g;s/"@id"/"at__id"/g' >_codemeta.json

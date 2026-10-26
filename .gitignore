@@ -16,6 +16,7 @@
 *.tar.gz
 *.tgz
 /release_notes.tmp
+/_codemeta.json
 
 # NOTE: testdata/ and .github/ are deliberately NOT ignored. testdata/ holds
 # captured CrossRef responses the tests read (nothing writes into it), and

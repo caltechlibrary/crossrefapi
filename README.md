@@ -58,6 +58,12 @@ You can compare two copies of a "works" response and see what has changed.
     crossrefapi -mailto="jane.doe@library.example.edu" works "10.1037/0003-066x.59.1.29"
 ```
 
+## Documentation
+
+- [Installation](INSTALL.md)
+- [User manual](user_manual.md)
+- [crossrefapi(1)](crossrefapi.1.md) - the command line tool's manual page
+
 ## Reference
 
 - [Crossref API Docs](https://api.crossref.org/)
