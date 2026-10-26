@@ -26,6 +26,9 @@ const (
 	// WarnScriptUnmapped means a sub or superscript has a character with no
 	// Unicode form in the symbol table; its text was kept as it was.
 	WarnScriptUnmapped = "script-unmapped"
+	// WarnMultipleTitles means a record has other titles beside the first.
+	// Fragment holds them, joined with " | "; AlternateTitles returns them.
+	WarnMultipleTitles = "multiple-titles"
 	// WarnMathLinear means a formula had a script or root the Unicode forms
 	// cannot show, so it was written in a linear form such as "Z_N".
 	WarnMathLinear = "math-linear"
