@@ -14,6 +14,9 @@ var (
 )
 
 func TestClient(t *testing.T) {
+	if MailTo == "" {
+		t.Skip("live CrossRef API test; run it with: make test-live MAILTO=you@example.edu")
+	}
 	api, err := NewCrossRefClient("crossrefapi_test.go", MailTo)
 	if err != nil {
 		t.Error(err)

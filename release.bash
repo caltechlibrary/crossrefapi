@@ -1,16 +1,19 @@
 #!/bin/bash
 #
 # release.bash creates a draft GitHub release from dist/*.zip. Run `make
-# release` first: it builds the zip files and checks them.
+# release` first: it regenerates the version files, builds the zip files and
+# checks them (release-check), so by the time this script runs the checks have
+# already passed.
 #
 # Usage: ./release.bash [--dry-run] [--yes]
 #
 # The release tag and notes come from codemeta.json (version, releaseNotes).
-# The script refuses to run unless the working tree is clean and every commit is
-# pushed, so a release is always built from what is on GitHub. It writes a
-# checksums file next to the zip files, then creates a DRAFT release carrying
-# the zips and the checksums. Publish the draft from the repository's releases
-# page.
+# The script refuses to run if anything is uncommitted other than the files
+# `make release` and the author's version bump change (PREP_FILES below), or if
+# commits are not pushed. After you confirm, it commits those files as
+# "prep for vX.Y.Z", pushes, writes a checksums file next to the zip files and
+# creates a DRAFT release carrying the zips and the checksums. Publish the draft
+# from the repository's releases page.
 #
 # Options:
 #   --dry-run   run every check and print what would happen; create nothing
@@ -21,16 +24,29 @@
 #
 # EXIT STATUS
 #   0   draft release created (or --dry-run checks passed)
-#   1   a check refused: uncommitted changes, unpushed commits, the tag points
-#       elsewhere, the release already exists, or the prompt was declined
+#   1   a check refused: uncommitted changes beyond the release files, unpushed
+#       commits, the tag points elsewhere, the release already exists, or the
+#       prompt was declined
 #   2   usage: unknown option or surplus argument
 #   65  codemeta.json has no usable version (missing or unexpected characters)
 #   66  an input is missing: codemeta.json, dist/*.zip, or a required command
-#   69  gh could not create the release
+#   69  git could not push, or gh could not create the release
+#   74  git could not commit the release files
 #
 set -euo pipefail
 
-E_NEGATIVE=1 E_USAGE=2 E_DATA=65 E_NO_INPUT=66 E_UNAVAILABLE=69
+E_NEGATIVE=1 E_USAGE=2 E_DATA=65 E_NO_INPUT=66 E_UNAVAILABLE=69 E_IO=74
+
+# The files a release legitimately changes: the author's version bump and what
+# `make release` regenerates. Anything else uncommitted stops the release.
+PREP_FILES="codemeta.json version.go CITATION.cff installer.sh installer.ps1"
+is_prep_file() { # is_prep_file PATH
+	case "$1" in
+	docs/*.?.md) return 0 ;;
+	esac
+	for F in $PREP_FILES; do [ "$1" = "$F" ] && return 0; done
+	return 1
+}
 
 die() { # die CODE MESSAGE
 	local code="$1"
@@ -89,8 +105,16 @@ shopt -u nullglob
 
 # A release is built from what is on GitHub: clean tree, everything pushed.
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || die "$E_NO_INPUT" "not inside a git work tree"
-[ -z "$(git status --porcelain)" ] ||
-	die "$E_NEGATIVE" "uncommitted changes; commit them first (git status)"
+DIRTY_PREP=()
+while IFS= read -r LINE; do
+	[ -n "$LINE" ] || continue
+	CHANGED="${LINE:3}"
+	# Only a plain modification of a release file is allowed (" M" or "M ").
+	case "${LINE:0:2}" in
+	" M" | "M " | "MM") is_prep_file "$CHANGED" && { DIRTY_PREP+=("$CHANGED"); continue; } ;;
+	esac
+	die "$E_NEGATIVE" "uncommitted changes beyond the release files ($CHANGED); commit or revert them first"
+done < <(git status --porcelain)
 UPSTREAM="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null)" ||
 	die "$E_NEGATIVE" "commits not pushed: the branch has no upstream"
 [ "$(git rev-list --count "$UPSTREAM..HEAD")" = "0" ] ||
@@ -113,6 +137,10 @@ for Z in "${ZIPS[@]}"; do echo "  $Z"; done
 echo "  dist/$CHECKSUMS (to be written)"
 echo "notes:     $(jq -r '.releaseNotes // ""' codemeta.json | head -c 200)"
 
+if [ "${#DIRTY_PREP[@]}" -gt 0 ]; then
+	echo "would commit and push: ${DIRTY_PREP[*]}"
+fi
+
 if [ "$DRY_RUN" = "1" ]; then
 	echo "dry run: nothing created"
 	exit 0
@@ -121,6 +149,13 @@ fi
 if [ "$ASSUME_YES" != "1" ]; then
 	read -r -p "Create the draft release $TAG on GitHub? (y/N) " YES_NO || YES_NO=""
 	[ "$YES_NO" = "y" ] || die "$E_NEGATIVE" "release cancelled; nothing sent to GitHub"
+fi
+
+if [ "${#DIRTY_PREP[@]}" -gt 0 ]; then
+	git add -- "${DIRTY_PREP[@]}"
+	git commit -q -m "prep for $TAG" || die "$E_IO" "git could not commit the release files"
+	git push -q || die "$E_UNAVAILABLE" "git push failed; the release files are committed locally, nothing sent to GitHub"
+	echo "committed and pushed: ${DIRTY_PREP[*]}"
 fi
 
 (cd dist && $SHA "${ZIPS[@]##*/}" >"$CHECKSUMS")

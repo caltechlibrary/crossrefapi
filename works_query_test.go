@@ -308,7 +308,10 @@ func TestBoolParameter_MarshalText(t *testing.T) {
 }
 
 func TestWorksQuery_RealAPICall(t *testing.T) {
-	client, err := NewCrossRefClient("crossrefapi_test.go", "ls.duchemin@gmail.com")
+	if MailTo == "" {
+		t.Skip("live CrossRef API test; run it with: make test-live MAILTO=you@example.edu")
+	}
+	client, err := NewCrossRefClient("crossrefapi_test.go", MailTo)
 	if err != nil {
 		t.Error(err)
 		t.FailNow()

@@ -27,6 +27,7 @@ new_repo() {
 		git config user.name Test
 		jq -n '{name:"demo", version:"1.2.3", releaseNotes:"Notes with `backticks` and $dollars"}' >codemeta.json
 		printf '/dist/\n' >.gitignore
+		printf 'package demo\n' >version.go
 		cp "$HERE/release.bash" .
 		git add . && git commit -q -m init && git push -q -u origin HEAD 2>/dev/null
 		mkdir dist
@@ -44,6 +45,7 @@ if [ "$1 $2" = "release view" ]; then
 fi
 if [ "$1 $2" = "release create" ]; then
 	[ "${GH_FAIL:-}" = "1" ] && exit 1
+	echo "STATE clean=$(git status --porcelain | wc -l | tr -d ' ') ahead=$(git rev-list --count '@{u}..HEAD')" >>"$LOG"
 	while [ $# -gt 0 ]; do
 		if [ "$1" = "--notes-file" ] || [ "$1" = "-F" ]; then echo "NOTES: $(cat "$2")" >>"$LOG"; fi
 		shift
@@ -115,6 +117,20 @@ W="$(new_repo dirty)"
 (cd "$W" && echo '# change' >>.gitignore)
 run_release "$W" --dry-run;         check "dirty tree"      1 "uncommitted"
 
+# The files `make release` regenerates may be dirty: the script commits them.
+W="$(new_repo prepdry)"
+(cd "$W" && echo '// regenerated' >>version.go && jq '.releaseNotes="new notes"' codemeta.json >c && mv c codemeta.json)
+run_release "$W" --dry-run;         check "release files dirty, dry run" 0 "would commit"
+if git -C "$W" status --porcelain | grep -q version.go; then echo "ok   dry run leaves the files uncommitted"; PASS=$((PASS + 1)); else echo "FAIL dry run committed"; FAIL=$((FAIL + 1)); fi
+
+W="$(new_repo untracked)"
+(cd "$W" && echo 'cff-version: 1.2.0' >CITATION.cff)
+run_release "$W" --dry-run;         check "untracked release file is refused" 1 "uncommitted"
+
+W="$(new_repo prepdirty)"
+(cd "$W" && echo '// regenerated' >>version.go && echo '# stray' >>.gitignore)
+run_release "$W" --dry-run;         check "stray dirty file beside release files" 1 "uncommitted"
+
 W="$(new_repo unpushed)"
 (cd "$W" && echo x >f && git add f && git commit -q -m local)
 run_release "$W" --dry-run;         check "unpushed commit" 1 "not pushed"
@@ -147,6 +163,18 @@ done
 if printf '%s' "$LOG" | grep -q 'NOTES: Notes with `backticks` and $dollars'; then echo "ok   release notes pass through unmangled"; PASS=$((PASS + 1)); else echo "FAIL release notes mangled"; echo "$LOG" | sed 's/^/     | /'; FAIL=$((FAIL + 1)); fi
 CS="$W/dist/demo-v1.2.3-checksums.txt"
 if [ -f "$CS" ] && grep -q "demo-v1.2.3-Linux-x86_64.zip" "$CS" && ! grep -q "dist/" "$CS"; then echo "ok   checksums file lists zips by bare name"; PASS=$((PASS + 1)); else echo "FAIL checksums file wrong"; FAIL=$((FAIL + 1)); fi
+
+# --- real run commits and pushes the release files before calling gh -----
+W="$(new_repo prepreal)"
+(cd "$W" && echo '// regenerated' >>version.go)
+run_release "$W" --yes;             check "release with dirty release files" 0 "draft"
+if gh_log "$W" | grep -q "STATE clean=0 ahead=0"; then echo "ok   tree was clean and pushed when gh create ran"; PASS=$((PASS + 1)); else echo "FAIL tree not clean and pushed at gh create"; gh_log "$W" | sed 's/^/     | /'; FAIL=$((FAIL + 1)); fi
+if git -C "$(dirname "$W")/remote.git" log --format=%s | head -1 | grep -q "prep for v1.2.3"; then echo "ok   remote has the prep commit"; PASS=$((PASS + 1)); else echo "FAIL remote lacks the prep commit"; FAIL=$((FAIL + 1)); fi
+
+W="$(new_repo pushfail)"
+(cd "$W" && echo '// regenerated' >>version.go && git remote set-url origin /nonexistent/remote.git)
+run_release "$W" --yes;             check "push fails" 69 "push"
+if gh_log "$W" | grep -q "release create"; then echo "FAIL gh create ran after a failed push"; FAIL=$((FAIL + 1)); else echo "ok   no release after a failed push"; PASS=$((PASS + 1)); fi
 
 # --- gh failure: 69 -------------------------------------------------------
 W="$(new_repo ghfail)"
