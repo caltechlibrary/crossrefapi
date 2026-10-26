@@ -1,8 +1,8 @@
 module github.com/caltechlibrary/crossrefapi
 
-go 1.23.4
+go 1.27.1
 
 require (
 	github.com/caltechlibrary/doitools v0.0.3
-	github.com/google/go-querystring v1.1.0
+	github.com/google/go-querystring v1.2.0
 )

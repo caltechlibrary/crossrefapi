@@ -1,5 +1,5 @@
 {
-  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@context": "https://w3id.org/codemeta/4.0",
   "type": "SoftwareSourceCode",
   "codeRepository": "https://github.com/caltechlibrary/crossrefapi",
   "author": [
@@ -9,7 +9,7 @@
       "givenName": "Robert",
       "familyName": "Doiel",
       "affiliation": {
-        "@type": "Organization",
+        "type": "Organization",
         "name": "Caltech Library"
       },
       "email": "rsdoiel@caltech.edu"
@@ -22,7 +22,7 @@
       "givenName": "Louis",
       "familyName": "Duchemin",
       "affiliation": {
-        "@type": "Organization",
+        "type": "Organization",
         "name": "Claude Bernard University"
       }
     }
@@ -34,7 +34,7 @@
       "givenName": "Robert",
       "familyName": "Doiel",
       "affiliation": {
-        "@type": "Organization",
+        "type": "Organization",
         "name": "Caltech Library"
       },
       "email": "rsdoiel@caltech.edu"
@@ -45,14 +45,15 @@
       "givenName": "Thomas E",
       "familyName": "Morrell",
       "affiliation": {
-        "@type": "Organization",
+        "type": "Organization",
         "name": "Caltech Library"
       },
       "email": "tmorrell@caltech.edu"
     }
   ],
-  "dateModified": "2025-11-19",
-  "datePublished": "2025-11-19",
+  "dateCreated": "2018-07-05",
+  "dateModified": "2026-10-26",
+  "datePublished": "2026-10-26",
   "description": "A Golang package and command line tool for working with the public CrossRef API",
   "keywords": [
     "CrossRef",
@@ -60,13 +61,22 @@
     "metadata"
   ],
   "name": "crossrefapi",
-  "license": "https://caltechlibrary/crossrefapi/LICENSE",
+  "license": "https://software.library.caltech.edu/crossrefapi/LICENSE",
   "programmingLanguage": [
-    "Go >= 1.23.4"
+    "Go >= 1.27.1"
   ],
-  "version": "1.0.10",
+  "operatingSystem": [
+    "Linux",
+    "macOS",
+    "Windows"
+  ],
+  "softwareRequirements": [
+    "Go >= 1.27.1",
+    "Pandoc (man pages)"
+  ],
+  "version": "1.0.11",
   "developmentStatus": "active",
   "issueTracker": "https://github.com/caltechlibrary/crossrefapi/issues",
   "downloadUrl": "https://github.com/caltechlibrary/crossrefapi/releases",
-  "releaseNotes": "Added support for CrossRef, Message, Funder identifiers."
+  "releaseNotes": "v1.0.11 changes how the project is built, released and documented. The Go package and command line tool behave as in v1.0.10.\n\nChanged:\n- The Makefile follows the current Caltech Library pattern: `make` builds, `make test` runs offline, `make generate` regenerates `version.go`, `CITATION.cff` and the installers from `codemeta.json`, and `make release` then `./release.bash` builds the release and creates the draft GitHub release.\n- `make test` no longer calls the live CrossRef API. Run `make test-live MAILTO=you@example.edu` for that; the live tests skip without a mailto address.\n- Documentation sources moved to `docs/` and the site at https://software.library.caltech.edu/crossrefapi/ is built in CI. The committed HTML, `css/`, `assets/` and the old site scripts are gone.\n- `codemeta.json` is CodeMeta 4.0, with a working license URL. The `codemeta-*.tmpl` files are removed.\n- 32-bit Raspberry Pi builds are dropped.\n- `github.com/google/go-querystring` is updated to v1.2.0.\n- `.gitignore` no longer ignores `testdata/` or `.github/`.\n\nFixed:\n- The removed `static.yml` workflow published the whole repository as the documentation site."
 }
