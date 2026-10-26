@@ -13,8 +13,6 @@ PROGRAMS = $(shell ls -1 cmd)
 
 MAN_PAGES = $(shell ls -1 docs/*.1.md 2>/dev/null | sed -E 's|^docs/||; s/\.1.md/.1/g')
 
-HTML_PAGES = $(shell find . -type f | grep -E '\.html')
-
 VERSION = $(shell grep '"version":' codemeta.json | cut -d\"  -f 4)
 
 BRANCH = $(shell git branch | grep '* ' | cut -d\  -f 2)
@@ -98,12 +96,8 @@ installer.ps1: .FORCE
 	@git add -f installer.ps1
 
 
-clean-website:
-	make -f website.mak clean
-
-website: clean-website .FORCE
-	make -f website.mak
-
+# The documentation site is built from docs/ by CI (.github/workflows/docs.yml);
+# no site target here and no generated HTML in the repository.
 
 # NOTE: on macOS you must use "mv" instead of "cp" to avoid problems
 install: build man .FORCE

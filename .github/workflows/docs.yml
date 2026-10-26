@@ -1,0 +1,51 @@
+name: Docs
+
+# Builds the documentation site from docs/ and publishes it to GitHub Pages.
+#
+# Replaces the committed HTML pages and the website.mak / page.tmpl /
+# mk-website.bash machinery that generated them. Generated HTML is not
+# committed (workspace DR-0010); the pages are rendered here from the Markdown
+# on every push, so a change to the Markdown cannot leave a stale page behind.
+#
+# The build itself lives in caltechlibrary/workflows, so a fix there reaches
+# this site on the next run with nothing written back into this repository.
+# The same build runs locally with pandoc: caltechlibrary/workflows
+# bin/build-pandoc.sh takes the same inputs, so this workflow is a convenience
+# and not something the project depends on.
+#
+# Pull requests build but do not deploy. Settings -> Pages -> Source must be
+# set to "GitHub Actions" before anything is published.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  docs:
+    uses: caltechlibrary/workflows/.github/workflows/docs-pandoc.yml@v1
+    with:
+      docs-dir: docs
+
+      # Markdown kept at the repository root, still published. Listed one per
+      # line rather than as a *.md glob so nothing else is published by accident.
+      # README.md becomes the site's index page.
+      extra-sources: |
+        README.md
+        INSTALL.md
+
+      # Files the pages reference or the install commands fetch:
+      #
+      #   installer.sh/.ps1   the two install commands in INSTALL.md fetch these
+      #                       from software.library.caltech.edu/crossrefapi/
+      #   LICENSE             the project's license, linked from the site
+      include: |
+        LICENSE
+        installer.sh
+        installer.ps1
