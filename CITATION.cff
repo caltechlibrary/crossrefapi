@@ -1,24 +1,33 @@
+
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
-title: "crossrefapi"
-abstract: "A Golang package and command line tool for working with the
-public CrossRef API"
+title: crossrefapi
+abstract: |-
+  A Golang package and command line tool for working with the public CrossRef API
 authors:
   - family-names: Doiel
     given-names: Robert
-    orcid: ""
+    orcid: https://orcid.org/0000-0003-0900-6903
+    email: rsdoiel@caltech.edu
 
-maintainers:
+contacts:
   - family-names: Doiel
     given-names: Robert
-    orcid: ""
+    orcid: https://orcid.org/0000-0003-0900-6903
+    email: rsdoiel@caltech.edu
   - family-names: Morrell
     given-names: Thomas E
-    orcid: ""
+    orcid: https://orcid.org/0000-0001-9266-5146
+    email: tmorrell@caltech.edu
 
 repository-code: "https://github.com/caltechlibrary/crossrefapi"
-version: 1.0.10
-license-url: "https://caltechlibrary/crossrefapi/LICENSE"
-keywords: [ "CrossRef", "DOI", "metadata" ]
-date-released: 2025-11-19
+version: 1.0.11
+date-released: 2026-10-26
+
+license-url: "https://software.library.caltech.edu/crossrefapi/LICENSE"
+keywords:
+  - CrossRef
+  - DOI
+  - metadata
+
