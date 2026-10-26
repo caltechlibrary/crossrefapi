@@ -6,11 +6,32 @@ import (
 	"html"
 	"io"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"unicode"
 	"unicode/utf8"
 )
+
+// maxNesting is the deepest element nesting the converters accept. Real
+// records nest a dozen levels; a fragment deeper than this is refused before it
+// can cost time or stack, and handled by the parse fallback.
+const maxNesting = 256
+
+// maxFragment is the longest fragment a warning carries.
+const maxFragment = 500
+
+// shorten limits a fragment quoted in a warning.
+func shorten(s string) string {
+	if len(s) <= maxFragment {
+		return s
+	}
+	cut := maxFragment
+	for cut > 0 && !utf8.RuneStart(s[cut]) {
+		cut--
+	}
+	return s[:cut] + "…"
+}
 
 // mathMLNamespace is the XML namespace of MathML. A formula is recognized by
 // it, never by a prefix: CrossRef uses "mml" in some records and a different
@@ -43,12 +64,25 @@ const (
 //
 // Code is a short stable identifier (see the Warn constants), and Fragment is
 // the markup or text the warning is about.
+//
+// @example
+//
+//	_, warnings := crossrefapi.PlainText("Z<sub>N</sub>")
+//	for _, w := range warnings {
+//		fmt.Println(w.Code, w.Fragment) // script-unmapped <sub>N</sub>
+//	}
 type Warning struct {
 	Code     string
 	Fragment string
 }
 
 // String returns the warning as "code: fragment".
+//
+// @returns {string} the warning as text
+// @example
+//
+//	w := crossrefapi.Warning{Code: "math-linear", Fragment: "Z_N"}
+//	fmt.Println(w) // math-linear: Z_N
 func (w Warning) String() string {
 	return fmt.Sprintf("%s: %s", w.Code, w.Fragment)
 }
@@ -110,7 +144,7 @@ func defaultTable() *Symbols {
 func plainText(s string, sym *Symbols) (string, []Warning) {
 	root, err := parseFragment(s, sym)
 	if err != nil {
-		return fallbackText(s, sym), []Warning{{Code: WarnParseFallback, Fragment: s}}
+		return fallbackText(s, sym), []Warning{{Code: WarnParseFallback, Fragment: shorten(s)}}
 	}
 	var warnings []Warning
 	return resolveEvents(flatten(root.kids, sym, &warnings), nil), warnings
@@ -130,6 +164,7 @@ type node struct {
 // entities and bare ampersands alone, and treats an undeclared prefix such as
 // "jats:" as part of the name.
 func parseFragment(s string, sym *Symbols) (*node, error) {
+	s = cleanInput(s)
 	d := xml.NewDecoder(strings.NewReader("<root>" + s + "</root>"))
 	d.Strict = false
 	d.AutoClose = xml.HTMLAutoClose
@@ -147,6 +182,9 @@ func parseFragment(s string, sym *Symbols) (*node, error) {
 		top := stack[len(stack)-1]
 		switch t := tok.(type) {
 		case xml.StartElement:
+			if len(stack) >= maxNesting {
+				return nil, fmt.Errorf("elements nested more than %d deep", maxNesting)
+			}
 			n := &node{space: t.Name.Space, name: strings.ToLower(t.Name.Local)}
 			for _, a := range t.Attr {
 				if a.Name.Space == "xmlns" || a.Name.Local == "xmlns" {
@@ -193,14 +231,64 @@ func entityMap(s string, sym *Symbols) map[string]string {
 	return m
 }
 
-// fallbackText recovers text from a fragment the parser rejected: real tags
-// (a "<" followed by a letter, "/", "!" or "?" and a closing ">") are dropped,
-// every other "<" is kept as text, entities are decoded once, and whitespace is
-// collapsed.
+// scriptRE and styleRE match whole script and style elements, content included.
+var (
+	scriptRE = regexp.MustCompile(`(?is)<script\b[^>]*>.*?</script\s*>`)
+	styleRE  = regexp.MustCompile(`(?is)<style\b[^>]*>.*?</style\s*>`)
+)
+
+// numericRefRE matches a numeric character reference.
+var numericRefRE = regexp.MustCompile(`&#([0-9]+|x[0-9a-fA-F]+);`)
+
+// cleanInput removes what XML cannot carry before parsing, so one stray
+// character does not make the parser refuse a whole abstract: control
+// characters and non-characters in the text, and numeric references to them
+// (&#1;, &#x110000;).
+func cleanInput(s string) string {
+	s = strings.Map(validXMLChar, s)
+	if !strings.Contains(s, "&#") {
+		return s
+	}
+	return numericRefRE.ReplaceAllStringFunc(s, func(ref string) string {
+		digits := ref[2 : len(ref)-1]
+		base := 10
+		if digits[0] == 'x' {
+			digits, base = digits[1:], 16
+		}
+		n, err := strconv.ParseInt(digits, base, 32)
+		if err != nil || validXMLChar(rune(n)) < 0 {
+			return ""
+		}
+		return ref
+	})
+}
+
+// validXMLChar drops the characters XML 1.0 does not allow (control characters
+// other than tab, newline and carriage return, and the non-characters), the
+// same set RDM's sanitizer removes.
+func validXMLChar(r rune) rune {
+	switch {
+	case r == 0x9 || r == 0xA || r == 0xD,
+		r >= 0x20 && r <= 0xD7FF,
+		r >= 0xE000 && r <= 0xFFFD,
+		r >= 0x10000 && r <= 0x10FFFF:
+		return r
+	}
+	return -1
+}
+
+// fallbackText recovers text from a fragment the parser rejected: script and
+// style elements are dropped with their content, real tags (a "<" followed by a
+// letter, "/", "!" or "?" and a closing ">") are dropped, every other "<" is kept
+// as text, entities are decoded once, whitespace is collapsed, and characters XML
+// does not allow are dropped from the result. It reads the
+// fragment once, however many "<" it holds.
 func fallbackText(s string, sym *Symbols) string {
+	s = styleRE.ReplaceAllString(scriptRE.ReplaceAllString(s, ""), "")
+	lastGT := strings.LastIndexByte(s, '>')
 	var b strings.Builder
 	for i := 0; i < len(s); {
-		if s[i] == '<' && i+1 < len(s) && (isASCIILetter(s[i+1]) || strings.IndexByte("/!?", s[i+1]) >= 0) {
+		if s[i] == '<' && i < lastGT && i+1 < len(s) && (isASCIILetter(s[i+1]) || strings.IndexByte("/!?", s[i+1]) >= 0) {
 			if j := strings.IndexByte(s[i:], '>'); j >= 0 {
 				i += j + 1
 				continue
@@ -217,6 +305,7 @@ func fallbackText(s string, sym *Symbols) string {
 		}
 		return html.UnescapeString(ref)
 	})
+	text = strings.Map(validXMLChar, text)
 	return strings.Join(strings.FieldsFunc(text, unicode.IsSpace), " ")
 }
 
@@ -263,8 +352,7 @@ func flatten(nodes []*node, sym *Symbols, warnings *[]Warning) []event {
 				ev = append(ev, a)
 			}
 		case n.name == "i" || n.name == "em" || n.name == "italic":
-			inner := innerText(n, sym, nil)
-			glue := utf8.RuneCountInString(inner) == 1
+			glue := utf8.RuneCountInString(strings.TrimSpace(allText(n))) == 1
 			if glue {
 				ev = append(ev, event{kind: evBoundary, glue: true})
 			}
@@ -277,15 +365,6 @@ func flatten(nodes []*node, sym *Symbols, warnings *[]Warning) []event {
 		}
 	}
 	return ev
-}
-
-// innerText is the resolved text of an element's children.
-func innerText(n *node, sym *Symbols, warnings *[]Warning) string {
-	var discard []Warning
-	if warnings == nil {
-		warnings = &discard
-	}
-	return resolveEvents(flatten(n.kids, sym, warnings), nil)
 }
 
 // scriptAtom builds the atom for a <sub> or <sup>: its text in Unicode

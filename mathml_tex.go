@@ -139,19 +139,27 @@ func onlyChild(n *node) *node {
 }
 
 // joinTeX concatenates pieces, putting a space after a letter command when a
-// letter or digit follows.
+// letter or digit follows. Only the end of the previous piece is looked at, so
+// a formula of many tokens is joined in linear time.
 func joinTeX(ps []texPiece) texPiece {
 	var b strings.Builder
 	tokens := 0
+	prev := ""
 	for _, p := range ps {
 		if p.text == "" {
 			continue
 		}
-		cur := b.String()
-		if first, _ := utf8.DecodeRuneInString(p.text); letterCommandEnd.MatchString(cur) && (unicode.IsLetter(first) || unicode.IsDigit(first)) {
-			b.WriteByte(' ')
+		if prev != "" {
+			tail := prev
+			if len(tail) > 40 {
+				tail = tail[len(tail)-40:]
+			}
+			if first, _ := utf8.DecodeRuneInString(p.text); letterCommandEnd.MatchString(tail) && (unicode.IsLetter(first) || unicode.IsDigit(first)) {
+				b.WriteByte(' ')
+			}
 		}
 		b.WriteString(p.text)
+		prev = p.text
 		tokens += p.tokens
 	}
 	return texPiece{b.String(), tokens}

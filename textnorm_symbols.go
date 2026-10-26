@@ -34,6 +34,14 @@ var defaultSymbolsJSON []byte
 //
 // The default table is embedded in the package (symbols.json). Use
 // [DefaultSymbols] or [LoadSymbols] to get one; each call returns a new value.
+//
+// @example
+//
+//	s, err := crossrefapi.DefaultSymbols()
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//	fmt.Println(s.Superscripts["2"], s.TeX["τ"]) // ² \tau
 type Symbols struct {
 	Tokens          map[string]string `json:"tokens"`
 	Entities        map[string]string `json:"entities"`

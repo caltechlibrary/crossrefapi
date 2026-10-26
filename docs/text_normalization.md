@@ -163,7 +163,14 @@ operators become TeX commands from the symbol table, a multi-letter identifier
 becomes `\mathrm{…}`, an over-bar `\overline{…}`, a double-struck `Z`
 `\mathbb{Z}`, and special characters (`% & # _ { }`) are escaped. Where the
 publisher also supplied TeX, the MathML is converted anyway so the output is
-consistent; the publisher's TeX is used only for a formula that has no MathML.
+consistent. The publisher's TeX is used only for a formula that has no MathML at all,
+and only if it is safe: every command in it must be on a list of mathematics commands
+(letters, operators, fonts, accents, fractions, roots, limits, spacing, and those in
+your symbol table). A link (`\href`), a macro or definition, `\require`, `\class`,
+`\style`, `\unicode`, an environment, a delimiter that would end the formula early, or
+a raw `%` or `$` makes the formula be left out, with a `math-unconverted` warning
+whose fragment is `tex-math`. The TeX is untrusted input that a page's renderer will
+run, which is why.
 
 Whitespace follows the same rules as titles, and there is none between blocks.
 The result is HTML: do not pass it to `PlainText`.
@@ -172,10 +179,10 @@ The result is HTML: do not pass it to `PlainText`.
 
 | Code | Meaning | `Fragment` |
 |---|---|---|
-| `parse-fallback` | the fragment is not well-formed (a raw `<`, a stray end tag); tags were stripped and entities decoded, and the whitespace rules were not applied | the whole input |
+| `parse-fallback` | the fragment is not well-formed (a raw `<`, a stray end tag) or nests elements more than 256 deep; tags were stripped (script and style with their content) and entities decoded, and the whitespace rules were not applied | the input, shortened to 500 bytes with `…` if longer |
 | `script-unmapped` | a `<sub>` or `<sup>` has a character with no Unicode form; its text was kept as it was | the element, such as `<sub>q</sub>` |
 | `math-linear` | a formula script or root could not be shown in Unicode and is written in a linear form | the linear text, such as `Z_N` |
-| `math-unconverted` | a MathML element has no conversion; the formula was reduced to its text | the element name |
+| `math-unconverted` | a MathML element has no conversion and the formula was reduced to its text, or publisher TeX was left out as unsafe | the element name, or `tex-math` |
 | `multiple-titles` | the record has other distinct titles | the other titles, joined with a vertical bar and spaces |
 
 A `Warning` prints as `code: fragment`.
@@ -248,5 +255,14 @@ backslash).
 - **The repository may change characters.** RDM's sanitizer also normalizes
   text (for example curly quotes to straight ones); that happens after this
   package and is outside it.
+- **Hostile input is bounded.** Titles and abstracts come from third parties, so the
+  converters are built not to be a way to harm the program or the page. Time is
+  linear in the size of the input; nesting deeper than 256 elements is refused
+  (a `parse-fallback`); characters XML cannot carry, and numeric references to them
+  (`&#1;`), are removed before parsing, so one bad character does not cost an
+  abstract its structure; script and style content never reaches the output. The
+  tests include fuzz targets (`go test -fuzz=FuzzHTMLAbstract`, `-fuzz=FuzzPlainText`)
+  whose checks say what safe output means: only the sanitizer's tags, only the
+  attributes listed above, no unsafe address, no control character.
 - **No language guessing.** Which of several titles to lead with is your
   decision; `AlternateTitles` gives you the rest.

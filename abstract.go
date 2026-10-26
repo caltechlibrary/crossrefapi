@@ -2,6 +2,7 @@ package crossrefapi
 
 import (
 	"net/url"
+	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -129,10 +130,18 @@ func (st *abstractState) element(n *node) []event {
 		return nil
 	case "inline-formula", "alternatives", "disp-formula":
 		if !hasMath(n) {
-			if tex := stripTeXDelims(firstTeXMath(n)); tex != "" {
+			tex := strings.Join(strings.Fields(stripTeXDelims(firstTeXMath(n))), " ")
+			switch {
+			case tex == "":
+			case !safeTeX(tex, st.sym):
+				// Publisher TeX is untrusted input that a page's math renderer
+				// will run: a link, a macro or a delimiter would do harm.
+				*st.warnings = append(*st.warnings, Warning{Code: WarnMathUnconverted, Fragment: "tex-math"})
+			default:
 				st.sawContent = true
 				return []event{{kind: evAtom, text: htmlEscape(`\(` + tex + `\)`), vis: tex, math: true}}
 			}
+			return nil
 		}
 		return st.flatten(n.kids)
 	case "title":
@@ -223,6 +232,77 @@ func firstTeXMath(n *node) string {
 		}
 	}
 	return ""
+}
+
+// texControlRE matches a TeX control sequence: a backslash and a name of
+// letters, or a backslash and one other character.
+var texControlRE = regexp.MustCompile(`\\([A-Za-z]+|[^A-Za-z])`)
+
+// texCommandNameRE finds the command names in a TeX command string.
+var texCommandNameRE = regexp.MustCompile(`\\([A-Za-z]+)`)
+
+// safeTeXEscapes are the control symbols safe TeX may use: escaped specials and
+// spacing. The delimiters \( \) \[ \] are not among them, since they would end
+// the formula early.
+const safeTeXEscapes = "%&#_{}$,;:! |\\"
+
+// safeTeXCommands are the TeX commands publisher TeX may use. They are all
+// mathematics: letters, operators, fonts, accents, fractions, roots, limits and
+// spacing. Links (\href, \url), macros and definitions (\def, \newcommand,
+// \let), loading (\require, \input), styling (\class, \style, \cssId),
+// raw characters (\unicode, \char) and environments (\begin, \end) are not.
+// The commands the symbol table itself produces are allowed as well.
+var safeTeXCommands = func() map[string]bool {
+	m := map[string]bool{}
+	for _, c := range strings.Fields(`frac dfrac tfrac binom choose atop sqrt text textbf textit textrm
+		mathrm mathit mathbf mathbb mathcal mathfrak mathsf mathtt mathop mathbin mathrel mathord
+		boldsymbol operatorname left right big Big bigg Bigg bigl bigr Bigl Bigr overline underline
+		widehat widetilde overbrace underbrace hat tilde vec bar dot ddot acute grave check breve
+		sum prod coprod int oint iint iiint lim limsup liminf limits nolimits sin cos tan cot sec csc
+		arcsin arccos arctan sinh cosh tanh log ln lg exp max min sup inf det dim ker gcd mod bmod pmod
+		arg deg hom Pr infty partial nabla cdot cdots ldots dots vdots ddots times div pm mp ast star
+		circ bullet leq le geq ge neq ne ll gg approx sim simeq cong equiv propto in notin ni subset
+		subseteq supset supseteq cup cap setminus emptyset varnothing forall exists nexists neg land
+		lor lnot oplus otimes odot to rightarrow leftarrow leftrightarrow Rightarrow Leftarrow
+		Leftrightarrow mapsto longrightarrow longleftarrow uparrow downarrow quad qquad prime angle
+		perp parallel mid langle rangle lfloor rfloor lceil rceil Re Im hbar ell wp aleph not
+		displaystyle textstyle scriptstyle substack`) {
+		m[c] = true
+	}
+	return m
+}()
+
+// safeTeX reports whether publisher TeX is safe to put between \( and \): every
+// control sequence in it is a safe command or a safe escape, and no raw
+// comment, math-shift or stray backslash is left.
+func safeTeX(tex string, sym *Symbols) bool {
+	var fromTable map[string]bool
+	for _, m := range texControlRE.FindAllStringSubmatch(tex, -1) {
+		name := m[1]
+		if len(name) == 1 && !unicode.IsLetter(rune(name[0])) {
+			if !strings.Contains(safeTeXEscapes, name) {
+				return false
+			}
+			continue
+		}
+		if safeTeXCommands[name] {
+			continue
+		}
+		if fromTable == nil {
+			fromTable = map[string]bool{}
+			for _, tbl := range []map[string]string{sym.TeX, sym.Accents, sym.MathVariants} {
+				for _, cmd := range tbl {
+					for _, n := range texCommandNameRE.FindAllStringSubmatch(cmd, -1) {
+						fromTable[n[1]] = true
+					}
+				}
+			}
+		}
+		if !fromTable[name] {
+			return false
+		}
+	}
+	return !strings.ContainsAny(texControlRE.ReplaceAllString(tex, ""), `\%$`)
 }
 
 // stripTeXDelims removes one pair of math delimiters ($$, \[ \], \( \), $) from

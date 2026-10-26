@@ -151,6 +151,7 @@ func TestMathTeX_Elements(t *testing.T) {
 		{"mn mi mo", `<mml:mi>x</mml:mi><mml:mo>+</mml:mo><mml:mn>12.5</mml:mn>`, `x+12.5`},
 		{"greek letter", `<mml:mi>α</mml:mi>`, `\alpha`},
 		{"command then letter gets a space", `<mml:mi>α</mml:mi><mml:mi>x</mml:mi>`, `\alpha x`},
+		{"three tokens after a command", `<mml:mi>α</mml:mi><mml:mi>x</mml:mi><mml:mi>y</mml:mi>`, `\alpha xy`},
 		{"command then digit gets a space", `<mml:mo>∼</mml:mo><mml:mn>2</mml:mn>`, `\sim 2`},
 		{"command then bracket gets none", `<mml:mi>α</mml:mi><mml:mo>(</mml:mo>`, `\alpha(`},
 		{"two commands", `<mml:mi>α</mml:mi><mml:mi>β</mml:mi>`, `\alpha\beta`},

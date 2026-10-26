@@ -11,6 +11,15 @@ package crossrefapi
 // FullTitle, AlternateTitles and HTMLAbstract are the same conversions with that
 // default; use a Normalizer when you need an override file (crossrefapi/DR-0001
 // decision 4).
+//
+// @example
+//
+//	n, err := crossrefapi.NewNormalizer("") // the default table
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//	title, _ := n.PlainText("<i>Euclid</i>\n   preparation")
+//	fmt.Println(title) // Euclid preparation
 type Normalizer struct {
 	sym *Symbols
 }
