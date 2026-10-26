@@ -4,7 +4,7 @@ message: "If you use this software, please cite it as below."
 type: software
 title: crossrefapi
 abstract: |-
-  A Golang package and command line tool for working with the public CrossRef API
+  A Golang package and command line tool for working with the public CrossRef API, with a text layer that turns CrossRef titles and abstracts into plain text and repository-safe HTML
 authors:
   - family-names: Doiel
     given-names: Robert
@@ -22,7 +22,7 @@ contacts:
     email: tmorrell@caltech.edu
 
 repository-code: "https://github.com/caltechlibrary/crossrefapi"
-version: 1.0.11
+version: 1.1.0
 date-released: 2026-10-26
 
 license-url: "https://software.library.caltech.edu/crossrefapi/LICENSE"

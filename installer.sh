@@ -1,11 +1,11 @@
 #!/bin/sh
-# generated with CMTools 1.0.11 a3a8f07
+# generated with CMTools 1.1.0 c551ee2
 
 #
 # Set the package name and version to install
 #
 PACKAGE="crossrefapi"
-VERSION="1.0.11"
+VERSION="1.1.0"
 GIT_GROUP="caltechlibrary"
 RELEASE="https://github.com/$GIT_GROUP/$PACKAGE/releases/tag/v$VERSION"
 if [ "$PKG_VERSION" != "" ]; then
