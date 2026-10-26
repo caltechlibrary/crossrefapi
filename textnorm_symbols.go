@@ -25,6 +25,10 @@ var defaultSymbolsJSON []byte
 //   - Superscripts and Subscripts map one character to its one-character
 //     Unicode super or subscript form.
 //   - TeX maps a character to the TeX command that produces it.
+//   - Accents maps a MathML over-accent character to the TeX command that
+//     puts it over its base (macron to \overline).
+//   - MathVariants maps a MathML mathvariant value to the TeX font command
+//     that applies it (double-struck to \mathbb).
 //   - DroppedHeadings lists abstract headings that are dropped when they come
 //     first ("Abstract"); matching rules belong to the abstract converter.
 //
@@ -36,6 +40,8 @@ type Symbols struct {
 	Superscripts    map[string]string `json:"superscripts"`
 	Subscripts      map[string]string `json:"subscripts"`
 	TeX             map[string]string `json:"tex"`
+	Accents         map[string]string `json:"accents"`
+	MathVariants    map[string]string `json:"mathvariants"`
 	DroppedHeadings []string          `json:"dropped_headings"`
 }
 
@@ -48,6 +54,8 @@ type symbolsOverride struct {
 	Superscripts    map[string]string `json:"superscripts"`
 	Subscripts      map[string]string `json:"subscripts"`
 	TeX             map[string]string `json:"tex"`
+	Accents         map[string]string `json:"accents"`
+	MathVariants    map[string]string `json:"mathvariants"`
 	DroppedHeadings *[]string         `json:"dropped_headings"`
 }
 
@@ -116,6 +124,8 @@ func LoadSymbols(overridePath string) (*Symbols, error) {
 		Superscripts:    mergeMaps(s.Superscripts, o.Superscripts),
 		Subscripts:      mergeMaps(s.Subscripts, o.Subscripts),
 		TeX:             mergeMaps(s.TeX, o.TeX),
+		Accents:         mergeMaps(s.Accents, o.Accents),
+		MathVariants:    mergeMaps(s.MathVariants, o.MathVariants),
 		DroppedHeadings: s.DroppedHeadings,
 	}
 	if o.DroppedHeadings != nil {
@@ -160,7 +170,7 @@ func decodeStrict(src []byte, source string, v any) error {
 func validateSymbols(s *Symbols, source string) error {
 	for section, m := range map[string]map[string]string{
 		"tokens": s.Tokens, "entities": s.Entities, "superscripts": s.Superscripts,
-		"subscripts": s.Subscripts, "tex": s.TeX,
+		"subscripts": s.Subscripts, "tex": s.TeX, "accents": s.Accents, "mathvariants": s.MathVariants,
 	} {
 		for k, v := range m {
 			if k == "" {
@@ -174,6 +184,10 @@ func validateSymbols(s *Symbols, source string) error {
 			case "tex", "entities":
 				if v == "" {
 					return fmt.Errorf("%s: %s[%q] has an empty value", source, section, k)
+				}
+			case "accents", "mathvariants":
+				if !strings.HasPrefix(v, `\`) {
+					return fmt.Errorf("%s: %s[%q] = %q: want a TeX command starting with a backslash", source, section, k, v)
 				}
 			}
 		}

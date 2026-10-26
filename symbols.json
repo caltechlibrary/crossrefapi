@@ -246,6 +246,26 @@
     "†": "\\dagger",
     "√": "\\surd"
   },
+  "accents": {
+    "¯": "\\overline",
+    "‾": "\\overline",
+    "^": "\\hat",
+    "ˆ": "\\hat",
+    "~": "\\tilde",
+    "˜": "\\tilde",
+    "→": "\\vec",
+    "˙": "\\dot",
+    "¨": "\\ddot"
+  },
+  "mathvariants": {
+    "normal": "\\mathrm",
+    "double-struck": "\\mathbb",
+    "bold": "\\mathbf",
+    "script": "\\mathcal",
+    "fraktur": "\\mathfrak",
+    "sans-serif": "\\mathsf",
+    "monospace": "\\mathtt"
+  },
   "dropped_headings": [
     "Abstract"
   ]

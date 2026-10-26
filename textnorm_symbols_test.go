@@ -45,6 +45,7 @@ func TestDefaultSymbols_Loads(t *testing.T) {
 		"tokens": len(s.Tokens), "entities": len(s.Entities),
 		"superscripts": len(s.Superscripts), "subscripts": len(s.Subscripts),
 		"tex": len(s.TeX), "dropped_headings": len(s.DroppedHeadings),
+		"accents": len(s.Accents), "mathvariants": len(s.MathVariants),
 	} {
 		if n == 0 {
 			t.Errorf("section %s is empty", name)
@@ -72,6 +73,10 @@ func TestDefaultSymbols_Loads(t *testing.T) {
 		{"tex", s.TeX, "∼", `\sim`},
 		{"tex", s.TeX, "→", `\to`},
 		{"tex", s.TeX, "±", `\pm`},
+		{"accents", s.Accents, "¯", `\overline`},
+		{"accents", s.Accents, "^", `\hat`},
+		{"mathvariants", s.MathVariants, "double-struck", `\mathbb`},
+		{"mathvariants", s.MathVariants, "normal", `\mathrm`},
 	}
 	for _, w := range want {
 		got, ok := w.m[w.key]
@@ -111,6 +116,13 @@ func TestDefaultSymbols_Invariants(t *testing.T) {
 	for k, v := range s.TeX {
 		if v == "" {
 			t.Errorf("tex[%q] is empty", k)
+		}
+	}
+	for name, m := range map[string]map[string]string{"accents": s.Accents, "mathvariants": s.MathVariants} {
+		for k, v := range m {
+			if k == "" || !strings.HasPrefix(v, `\`) {
+				t.Errorf("%s[%q] = %q: want a non-empty key and a TeX command", name, k, v)
+			}
 		}
 	}
 	for k, v := range s.Entities {
@@ -166,7 +178,9 @@ func TestLoadSymbols_OverrideReplacesAndAdds(t *testing.T) {
 	p := writeOverride(t, `{
   "tex": {"τ": "\\mathrm{tau}", "ℵ": "\\aleph"},
   "tokens": {"⁢": "*", "x": ""},
-  "subscripts": {"⊙": "⊙"}
+  "subscripts": {"⊙": "⊙"},
+  "accents": {"^": "\\widehat", "←": "\\overleftarrow"},
+  "mathvariants": {"bold": "\\boldsymbol", "frak": "\\mathfrak"}
 }`)
 	def, err := DefaultSymbols()
 	if err != nil {
@@ -196,6 +210,12 @@ func TestLoadSymbols_OverrideReplacesAndAdds(t *testing.T) {
 	}
 	if got.Subscripts["⊙"] != "⊙" {
 		t.Errorf("added subscript = %q", got.Subscripts["⊙"])
+	}
+	if got.Accents["^"] != `\widehat` || got.Accents["¯"] != def.Accents["¯"] || len(got.Accents) != len(def.Accents)+1 {
+		t.Errorf("accents override: %v", got.Accents)
+	}
+	if got.MathVariants["bold"] != `\boldsymbol` || got.MathVariants["frak"] != `\mathfrak` || got.MathVariants["double-struck"] != def.MathVariants["double-struck"] {
+		t.Errorf("mathvariants override: %v", got.MathVariants)
 	}
 	if got.Superscripts["2"] != def.Superscripts["2"] || len(got.Entities) != len(def.Entities) {
 		t.Error("sections the override did not name were changed")
@@ -265,6 +285,8 @@ func TestLoadSymbols_BadFiles(t *testing.T) {
 		{"multi-character superscript key", `{"superscripts": {"ab": "ᵃ"}}`, "superscripts"},
 		{"multi-character subscript value", `{"subscripts": {"a": "ₐₐ"}}`, "subscripts"},
 		{"empty dropped heading", `{"dropped_headings": ["Abstract", " "]}`, "dropped_headings"},
+		{"accent without a command", `{"accents": {"^": "hat"}}`, "accents"},
+		{"empty mathvariant key", `{"mathvariants": {"": "\\mathbb"}}`, "mathvariants"},
 		{"wrong type", `{"tex": ["a"]}`, ""},
 	}
 	for _, c := range cases {

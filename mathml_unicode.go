@@ -149,13 +149,21 @@ func linear(text string, tokens int, warnings *[]Warning) mathPiece {
 // records which element it was.
 func unconverted(n *node, sym *Symbols, warnings *[]Warning) mathPiece {
 	*warnings = append(*warnings, Warning{Code: WarnMathUnconverted, Fragment: n.name})
-	var ps []mathPiece
+	text := contentText(n, sym)
+	if text == "" {
+		return mathPiece{}
+	}
+	return mathPiece{text, countTokens(n, sym)}
+}
+
+// contentText is the text under a node with the table's token replacements
+// applied to each run of text, and nothing between the runs.
+func contentText(n *node, sym *Symbols) string {
+	var b strings.Builder
 	var walk func(*node)
 	walk = func(n *node) {
 		if n.name == "" {
-			if p := tokenPiece(n.text, sym); p.tokens > 0 {
-				ps = append(ps, p)
-			}
+			b.WriteString(tokenPiece(n.text, sym).text)
 			return
 		}
 		for _, k := range n.kids {
@@ -163,7 +171,19 @@ func unconverted(n *node, sym *Symbols, warnings *[]Warning) mathPiece {
 		}
 	}
 	walk(n)
-	return joinPieces(ps)
+	return b.String()
+}
+
+// countTokens counts the runs of text under a node that survive the table.
+func countTokens(n *node, sym *Symbols) int {
+	if n.name == "" {
+		return tokenPiece(n.text, sym).tokens
+	}
+	total := 0
+	for _, k := range n.kids {
+		total += countTokens(k, sym)
+	}
+	return total
 }
 
 // allText returns all the text under a node.

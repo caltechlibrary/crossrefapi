@@ -88,13 +88,19 @@ var (
 //	title, warnings := crossrefapi.PlainText("<i>Euclid</i>\n   preparation")
 //	fmt.Println(title, len(warnings)) // Euclid preparation 0
 func PlainText(s string) (string, []Warning) {
+	return plainText(s, defaultTable())
+}
+
+// defaultTable returns the embedded symbol table, loaded once. It is shared and
+// must not be changed.
+func defaultTable() *Symbols {
 	sym, err := defaultSymbolsOnce()
 	if err != nil {
 		// The embedded table is checked by this package's tests; reaching
 		// this means the package was built with a damaged symbols.json.
 		panic("crossrefapi: embedded symbols.json is malformed: " + err.Error())
 	}
-	return plainText(s, sym)
+	return sym
 }
 
 // plainText is PlainText with an explicit symbol table.
@@ -104,14 +110,15 @@ func plainText(s string, sym *Symbols) (string, []Warning) {
 		return fallbackText(s, sym), []Warning{{Code: WarnParseFallback, Fragment: s}}
 	}
 	var warnings []Warning
-	return resolveEvents(flatten(root.kids, sym, &warnings)), warnings
+	return resolveEvents(flatten(root.kids, sym, &warnings), nil), warnings
 }
 
 // node is one element or text run of a parsed fragment.
 type node struct {
-	space string // namespace (or an undeclared prefix) of an element
-	name  string // lower-cased local name; "" for a text node
-	text  string // the text of a text node
+	space string            // namespace (or an undeclared prefix) of an element
+	name  string            // lower-cased local name; "" for a text node
+	attrs map[string]string // attributes by lower-cased local name, xmlns excluded
+	text  string            // the text of a text node
 	kids  []*node
 }
 
@@ -138,6 +145,15 @@ func parseFragment(s string, sym *Symbols) (*node, error) {
 		switch t := tok.(type) {
 		case xml.StartElement:
 			n := &node{space: t.Name.Space, name: strings.ToLower(t.Name.Local)}
+			for _, a := range t.Attr {
+				if a.Name.Space == "xmlns" || a.Name.Local == "xmlns" {
+					continue
+				}
+				if n.attrs == nil {
+					n.attrs = map[string]string{}
+				}
+				n.attrs[strings.ToLower(a.Name.Local)] = a.Value
+			}
 			top.kids = append(top.kids, n)
 			stack = append(stack, n)
 		case xml.EndElement:
@@ -208,16 +224,20 @@ func isASCIILetter(c byte) bool {
 // event kinds for the flattened fragment.
 const (
 	evText     = iota // a run of text, whitespace included
-	evBoundary        // a tag boundary that matters to whitespace (glue)
+	evBoundary        // a tag boundary that matters to whitespace (glue), writing nothing
+	evTag             // markup to write as it is (HTML output)
 	evAtom            // text that is never split or trimmed: a script or a formula
 )
 
 // event is one step of the flattened fragment that resolveEvents turns into text.
 type event struct {
-	kind int
-	text string
-	glue bool // behaves like a sub or superscript beside layout whitespace
-	math bool // the atom is a formula
+	kind  int
+	text  string // evText: the text; evAtom: what to write (already safe for the output)
+	raw   string // evTag: the markup to write
+	vis   string // evAtom: the text whose first and last characters decide spacing; default text
+	glue  bool   // behaves like a sub or superscript beside layout whitespace
+	math  bool   // the atom is a formula
+	block bool   // evTag: a block boundary, where whitespace around it is dropped
 }
 
 // flatten turns parsed nodes into events. Scripts and formulas become atoms;
@@ -262,7 +282,7 @@ func innerText(n *node, sym *Symbols, warnings *[]Warning) string {
 	if warnings == nil {
 		warnings = &discard
 	}
-	return resolveEvents(flatten(n.kids, sym, warnings))
+	return resolveEvents(flatten(n.kids, sym, warnings), nil)
 }
 
 // scriptAtom builds the atom for a <sub> or <sup>: its text in Unicode
@@ -270,7 +290,7 @@ func innerText(n *node, sym *Symbols, warnings *[]Warning) string {
 // text as it was, with a warning.
 func scriptAtom(n *node, sym *Symbols, warnings *[]Warning) (event, bool) {
 	var nested []Warning
-	inner := resolveEvents(flatten(n.kids, sym, &nested))
+	inner := resolveEvents(flatten(n.kids, sym, &nested), nil)
 	*warnings = append(*warnings, nested...)
 	if inner == "" {
 		return event{}, false
@@ -297,37 +317,51 @@ func scriptAtom(n *node, sym *Symbols, warnings *[]Warning) (event, bool) {
 // resolveEvents joins events into text, deciding every whitespace gap.
 //
 // A gap is the whitespace between two pieces of text, however many tags lie in
-// it. It is dropped at the start, and when it contains a newline and touches
-// glue (a script or a one-character italic); dropped before a hyphen that
-// follows a formula; and otherwise written as one space. With no gap at all, a
-// space is inserted between a formula and a word it abuts.
-func resolveEvents(ev []event) string {
-	var out strings.Builder
+// it. It is dropped at the start of the text or of a block; when it contains a
+// newline and touches glue (a script or a one-character italic) unless it also
+// holds a typographic space (a thin, en or no-break space), which a publisher
+// wrote on purpose; before a hyphen that follows a formula; and, when it
+// contains a newline, before closing punctuation (, . ; ) ]) that follows a
+// formula and after an opening bracket (( [) that precedes one. Otherwise it is
+// written as one space.
+// With no gap at all, a space is inserted between a formula and a word it
+// abuts. Markup (evTag) is written where it falls, so a gap's space comes
+// before any tag that follows the gap's first whitespace.
+//
+// esc, when not nil, escapes each run of text as it is written (HTML output).
+func resolveEvents(ev []event, esc func(string) string) string {
+	var parts []string
 	var last rune
-	type gapState struct{ ws, nl, glue bool }
+	type gapState struct{ ws, nl, glue, typo bool }
 	var gap gapState
+	gapAt := -1       // index in parts of the pending gap's placeholder
 	prevGlue := false // the last event since the last text was glue
 	prevMath := false // the last piece written was a formula
+	written := false  // text has been written since the start or the last block boundary
 
-	flush := func(piece string, pieceMath bool) {
-		first, _ := utf8.DecodeRuneInString(piece)
+	flush := func(first rune, pieceMath bool) {
 		switch {
 		case gap.ws:
-			drop := out.Len() == 0 ||
-				(gap.nl && gap.glue) ||
-				(prevMath && isHyphen(first))
+			drop := !written ||
+				(gap.nl && gap.glue && !gap.typo) ||
+				(prevMath && isHyphen(first)) ||
+				(gap.nl && prevMath && isClosing(first)) ||
+				(gap.nl && pieceMath && isOpening(last))
 			if !drop {
-				out.WriteByte(' ')
+				parts[gapAt] = " "
 			}
-		case out.Len() > 0 && (prevMath || pieceMath) && isAlnum(last) && isAlnum(first):
-			out.WriteByte(' ')
+		case written && (prevMath || pieceMath) && isAlnum(last) && isAlnum(first):
+			parts = append(parts, " ")
 		}
 		gap = gapState{}
+		gapAt = -1
 	}
-	write := func(piece string, math, glue bool) {
-		flush(piece, math)
-		out.WriteString(piece)
-		last, _ = utf8.DecodeLastRuneInString(piece)
+	write := func(out, vis string, math, glue bool) {
+		first, _ := utf8.DecodeRuneInString(vis)
+		flush(first, math)
+		parts = append(parts, out)
+		last, _ = utf8.DecodeLastRuneInString(vis)
+		written = true
 		prevMath = math
 		prevGlue = glue
 	}
@@ -341,11 +375,29 @@ func resolveEvents(ev []event) string {
 			if e.glue {
 				prevGlue = true
 			}
+		case evTag:
+			parts = append(parts, e.raw)
+			if e.block {
+				gap = gapState{}
+				gapAt = -1
+				written, prevMath, prevGlue, last = false, false, false, 0
+				break
+			}
+			if gap.ws && e.glue {
+				gap.glue = true
+			}
+			if e.glue {
+				prevGlue = true
+			}
 		case evAtom:
 			if gap.ws && e.glue {
 				gap.glue = true
 			}
-			write(e.text, e.math, e.glue)
+			vis := e.vis
+			if vis == "" {
+				vis = e.text
+			}
+			write(e.text, vis, e.math, e.glue)
 		case evText:
 			rest := e.text
 			for rest != "" {
@@ -357,22 +409,44 @@ func resolveEvents(ev []event) string {
 				run := rest[:n]
 				rest = rest[n:]
 				if isSpace {
+					if !gap.ws {
+						parts = append(parts, "")
+						gapAt = len(parts) - 1
+					}
 					gap.ws = true
 					gap.nl = gap.nl || strings.ContainsAny(run, "\n\r")
+					gap.typo = gap.typo || strings.ContainsFunc(run, isTypographicSpace)
 					gap.glue = gap.glue || prevGlue
 				} else {
-					write(run, false, false)
+					out := run
+					if esc != nil {
+						out = esc(run)
+					}
+					write(out, run, false, false)
 				}
 			}
 		}
 	}
-	return out.String()
+	return strings.Join(parts, "")
 }
 
 func firstRune(s string) rune {
 	r, _ := utf8.DecodeRuneInString(s)
 	return r
 }
+
+// isTypographicSpace reports a whitespace character a publisher writes on
+// purpose (a thin, en or no-break space), as opposed to the plain space, tab
+// and newline that layout produces.
+func isTypographicSpace(r rune) bool {
+	return unicode.IsSpace(r) && !strings.ContainsRune(" \t\n\r", r)
+}
+
+// isClosing reports punctuation that follows a word with no space before it.
+func isClosing(r rune) bool { return strings.ContainsRune(",.;)]", r) }
+
+// isOpening reports a bracket that precedes a word with no space after it.
+func isOpening(r rune) bool { return r == '(' || r == '[' }
 
 func isHyphen(r rune) bool { return r == '-' || r == '\u2010' }
 

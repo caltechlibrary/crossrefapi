@@ -251,3 +251,12 @@ func TestMathML_TokenSplitByComment(t *testing.T) {
 		t.Errorf("got %q, warnings %+v", got, ws)
 	}
 }
+
+// TestMathML_UnconvertedOperand checks an unconverted element still counts its
+// tokens, so a fraction brackets it.
+func TestMathML_UnconvertedOperand(t *testing.T) {
+	got, ws := PlainText("a " + mml(`<mml:mfrac><mml:mover><mml:mi>x</mml:mi><mml:mo>¯</mml:mo></mml:mover><mml:mn>2</mml:mn></mml:mfrac>`) + " b")
+	if got != "a (x¯)/2 b" || len(ws) != 1 || ws[0].Code != WarnMathUnconverted {
+		t.Errorf("got %q, warnings %+v", got, ws)
+	}
+}
